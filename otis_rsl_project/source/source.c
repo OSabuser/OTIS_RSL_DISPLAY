@@ -46,29 +46,8 @@
 
 #define NDEBUG
 
-//-------------------------------------------------------------------------
-
-const char *program = NULL;
-
-//-------------------------------------------------------------------------
-
 volatile bool run = true;
 
-//-------------------------------------------------------------------------
-
-static void
-signalHandler(
-    int signalNumber)
-{
-    switch (signalNumber)
-    {
-    case SIGINT:
-    case SIGTERM:
-
-        run = false;
-        break;
-    };
-}
 
 //-------------------------------------------------------------------------
 
@@ -93,267 +72,41 @@ void usage(void)
 
 int main(int argc, char *argv[])
 {
-    uint16_t background = 0x000F;
-    int32_t layer = 1;
-    uint32_t displayNumber = 0;
-    int32_t xOffset = 0;
-    int32_t yOffset = 0;
-    uint32_t timeout = 0;
-    bool xOffsetSet = false;
-    bool yOffsetSet = false;
-    bool interactive = true;
 
-    program = basename(argv[0]);
-
-    //---------------------------------------------------------------------
-
-    int opt = 0;
-
-    while ((opt = getopt(argc, argv, "b:d:l:x:y:t:n")) != -1)
+    bcm_host_init();
+	
+	const char *program = basename(argv[0]);
+	const char *work_mode = argv[1];
+	
+    
+    if(strcmp(work_mode, "-static") == 0)
     {
-        switch(opt)
-        {
-        case 'b':
-
-            background = strtol(optarg, NULL, 16);
-            break;
-
-        case 'd':
-
-            displayNumber = strtol(optarg, NULL, 10);
-            break;
-
-        case 'l':
-
-            layer = strtol(optarg, NULL, 10);
-            break;
-
-        case 'x':
-
-            xOffset = strtol(optarg, NULL, 10);
-            xOffsetSet = true;
-            break;
-
-        case 'y':
-
-            yOffset = strtol(optarg, NULL, 10);
-            yOffsetSet = true;
-            break;
+        printf("Static mode\n");
         
-        case 't':
-
-            timeout = atoi(optarg);
-            break;
-
-        case 'n':
-
-            interactive = false;
-            break;
-
-        default:
-
-            usage();
-            break;
-        }
     }
-
-    //---------------------------------------------------------------------
-
-    if (optind >= argc)
+    else if (strcmp(work_mode, "-dynamic") == 0)
     {
-        usage();
-    }
-
-    //---------------------------------------------------------------------
-
-    IMAGE_LAYER_T imageLayer;
-
-    const char *imagePath = argv[optind];
-
-    if(strcmp(imagePath, "-") == 0)
-    {
-        // Use stdin
-        if (loadPngFile(&(imageLayer.image), stdin) == false)
-        {
-            fprintf(stderr, "unable to load %s\n", imagePath);
-            exit(EXIT_FAILURE);
-        }
+        printf("Dynamic mode\n");
     }
     else
     {
-        // Load image from path
-        if (loadPng(&(imageLayer.image), imagePath) == false)
-        {
-            fprintf(stderr, "unable to load %s\n", imagePath);
-            exit(EXIT_FAILURE);
-        }
-    }
-
-    //---------------------------------------------------------------------
-
-    if (signal(SIGINT, signalHandler) == SIG_ERR)
-    {
-        perror("installing SIGINT signal handler");
+        fprintf(stderr, "Incorrect command line option %s\n", work_mode);
+		fprintf(stderr, "Usage: %s ", program);
+		fprintf(stderr, "[-dynamic or -static]");
+		fprintf(stderr, "    -dynamic - transparent background for videoplay");
+		fprintf(stderr, "    -static -  user background image overlays video frames");
         exit(EXIT_FAILURE);
     }
 
     //---------------------------------------------------------------------
 
-    if (signal(SIGTERM, signalHandler) == SIG_ERR)
-    {
-        perror("installing SIGTERM signal handler");
-        exit(EXIT_FAILURE);
-    }
-
-    //---------------------------------------------------------------------
-
-    bcm_host_init();
-
-    //---------------------------------------------------------------------
-
-    DISPMANX_DISPLAY_HANDLE_T display
-        = vc_dispmanx_display_open(displayNumber);
-    assert(display != 0);
-
-    //---------------------------------------------------------------------
-
-    DISPMANX_MODEINFO_T info;
-    int result = vc_dispmanx_display_get_info(display, &info);
-    assert(result == 0);
-
-    //---------------------------------------------------------------------
-
-    BACKGROUND_LAYER_T backgroundLayer;
-
-    if (background > 0)
-    {
-        initBackgroundLayer(&backgroundLayer, background, 0);
-    }
-
-    createResourceImageLayer(&imageLayer, layer);
-
-    //---------------------------------------------------------------------
-
-    DISPMANX_UPDATE_HANDLE_T update = vc_dispmanx_update_start(0);
-    assert(update != 0);
-
-    if (background > 0)
-    {
-        addElementBackgroundLayer(&backgroundLayer, display, update);
-    }
-
-    if (xOffsetSet == false)
-    {
-        xOffset = (info.width - imageLayer.image.width) / 2;
-    }
-
-    if (yOffsetSet == false)
-    {
-        yOffset = (info.height - imageLayer.image.height) / 2;
-    }
-
-    addElementImageLayerOffset(&imageLayer,
-                               xOffset,
-                               yOffset,
-                               display,
-                               update);
-
-    result = vc_dispmanx_update_submit_sync(update);
-    assert(result == 0);
-
-    //---------------------------------------------------------------------
-
-    int32_t step = 1;
-    uint32_t currentTime = 0;
 
     // Sleep for 10 milliseconds every run-loop
     const int sleepMilliseconds = 10;
 
     while (run)
     {
-        int c = 0;
-        if (interactive && keyPressed(&c))
-        {
-            c = tolower(c);
-
-            bool moveLayer = false;
-
-            switch (c)
-            {
-            case 27:
-
-                run = false;
-                break;
-
-            case 'a':
-
-                xOffset -= step;
-                moveLayer = true;
-                break;
-
-            case 'd':
-
-                xOffset += step;
-                moveLayer = true;
-                break;
-
-            case 'w':
-
-                yOffset -= step;
-                moveLayer = true;
-                break;
-
-            case 's':
-
-                yOffset += step;
-                moveLayer = true;
-                break;
-
-            case '+':
-
-                if (step == 1)
-                {
-                    step = 5;
-                }
-                else if (step == 5)
-                {
-                    step = 10;
-                }
-                else if (step == 10)
-                {
-                    step = 20;
-                }
-                break;
-
-            case '-':
-
-                if (step == 20)
-                {
-                    step = 10;
-                }
-                else if (step == 10)
-                {
-                    step = 5;
-                }
-                else if (step == 5)
-                {
-                    step = 1;
-                }
-                break;
-            }
-
-            if (moveLayer)
-            {
-                update = vc_dispmanx_update_start(0);
-                assert(update != 0);
-
-                moveImageLayer(&imageLayer, xOffset, yOffset, update);
-
-                result = vc_dispmanx_update_submit_sync(update);
-                assert(result == 0);
-            }
-        }
-
+        
         //---------------------------------------------------------------------
 
         usleep(sleepMilliseconds * 1000);
@@ -364,25 +117,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    //---------------------------------------------------------------------
 
-    keyboardReset();
-
-    //---------------------------------------------------------------------
-
-    if (background > 0)
-    {
-        destroyBackgroundLayer(&backgroundLayer);
-    }
-
-    destroyImageLayer(&imageLayer);
-
-    //---------------------------------------------------------------------
-
-    result = vc_dispmanx_display_close(display);
-    assert(result == 0);
-
-    //---------------------------------------------------------------------
 
     return 0;
 }
