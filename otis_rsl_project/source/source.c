@@ -22,6 +22,8 @@
 //-------------------------------------------------------------------------
 
 #define NDEBUG
+#define RED(string) "\x1b[31m" string "\x1b[0m"
+
 
 volatile bool run = true;
 
@@ -30,11 +32,15 @@ int main(int argc, char *argv[])
 {
 
     bcm_host_init();
-	fprintf(stderr, "STD ERROR IO TEST!");
+	fprintf(stderr, RED("STD ERROR IO TEST!"));
 	
 	const char *program = basename(argv[0]);
 	const char *work_mode = argv[1];
 	
+	if(work_mode == NULL)
+	{
+		fprintf(stderr, RED("OOOOOOOOPS!!!!"));
+	}
     
     if(strcmp(work_mode, "-static") == 0)
     {
