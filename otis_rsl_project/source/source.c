@@ -173,7 +173,7 @@ int main(int argc, char *argv[])
 
 		int bytes_read = read(fd, &uart_rx_buffer[1], 9);
 		
-		printf("Receive:%s, %d bytes, [0] = %s, [9] = %s \n", uart_rx_buffer, bytes_read,uart_rx_buffer[0], uart_rx_buffer[9]);
+		printf("Receive:%s, %d bytes\n", uart_rx_buffer, bytes_read);
 	
        
     }
