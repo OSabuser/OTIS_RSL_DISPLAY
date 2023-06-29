@@ -44,15 +44,15 @@ static void print_usage(void)
 }
 
 
-	struct termios serial;
 	
-	void serial_port_init(struct termios *handle)
+	
+	void serial_port_init(struct termios *handle, int *fd)
 	{
 		char buffer[8];
     
-		int fd = open("/dev/ttyAMA0", O_RDWR | O_NOCTTY | O_NDELAY);
+		*fd = open("/dev/ttyAMA0", O_RDWR | O_NOCTTY | O_NDELAY);
     
-		if(fd == -1)
+		if(*fd == -1)
 		{
             fprintf(stderr, RED("Unable to open /dev/ttyAMA0 file \n"));	
             exit(EXIT_FAILURE);
@@ -60,7 +60,7 @@ static void print_usage(void)
 		else printf("/dev/ttyAMA0 opening was successful \n");
     
     
-		if(tcgetattr(fd, handle) < 0)
+		if(tcgetattr(*fd, handle) < 0)
 		{
             fprintf(stderr, RED("Unable to get /dev/ttyAMA0 config \n"));	
             exit(EXIT_FAILURE);
@@ -76,10 +76,10 @@ static void print_usage(void)
 		handle->c_cflag = B9600 | CS8 | CREAD;
     
 		//Apply settings
-		tcsetattr(fd, TCSANOW, handle);
+		tcsetattr(*fd, TCSANOW, handle);
 		
-		close(fd);
-			
+		
+		close(*fd);
 	}
     
     
@@ -90,6 +90,10 @@ static void print_usage(void)
  
 int main(int argc, char *argv[])
 {
+	struct termios serial;
+	int file_descriptor;
+	
+	
     bcm_host_init();
 
 	/* Get command line arguments */
@@ -117,7 +121,9 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
-    serial_port_init(&serial);
+    serial_port_init(&serial, &file_descriptor);
+	
+	char uart_rx_buffer[8];
 
     while (1)
     {
