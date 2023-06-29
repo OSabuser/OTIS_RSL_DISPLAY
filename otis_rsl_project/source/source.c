@@ -71,23 +71,10 @@ int main(int argc, char *argv[])
 
     //---------------------------------------------------------------------
 
-
-    // Sleep for 10 milliseconds every run-loop
-    const int sleepMilliseconds = 10;
-	uint32_t currentTime = 0;
-	uint32_t timeout = 0;
-
-    while (run)
+    while (1)
     {
         
-        //---------------------------------------------------------------------
-
-        usleep(sleepMilliseconds * 1000);
-
-        currentTime += sleepMilliseconds;
-        if (timeout != 0 && currentTime >= timeout) {
-            run = false;
-        }
+       
     }
 
 
