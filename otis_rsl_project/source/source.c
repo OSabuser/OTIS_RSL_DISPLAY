@@ -166,14 +166,14 @@ int main(int argc, char *argv[])
 			
 		}
 		
-		//if (uart_rx_buffer[0] != '!') 
+		if (uart_rx_buffer[0] != '!') 
 		{
-			//continue;   
+			continue;   
 		}
 
 		int bytes_read = read(fd, uart_rx_buffer, 9);
 		
-		printf("Receive:%s \n, %d bytes\n", uart_rx_buffer, bytes_read);
+		printf("Receive:%s, %d bytes\n", uart_rx_buffer, bytes_read);
 	
        
     }
