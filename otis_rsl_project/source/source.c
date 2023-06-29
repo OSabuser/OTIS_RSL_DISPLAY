@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
 
     //serial_port_init(&serial, &file_descriptor);
 	
-	char uart_rx_buffer[8];
+	char uart_rx_buffer[10];
 	#if 1
    /*mini UART, TX-14, RX-15 */
 	struct termios serial;
@@ -173,7 +173,7 @@ int main(int argc, char *argv[])
 
 		int bytes_read = read(fd, &uart_rx_buffer[1], 9);
 		
-		printf("Receive:%s, %d bytes\n", uart_rx_buffer, bytes_read);
+		printf("Receive:%s, %d bytes, [0] = %s, [9] = %s \n", uart_rx_buffer, bytes_read,uart_rx_buffer[0], uart_rx_buffer[9]);
 	
        
     }
