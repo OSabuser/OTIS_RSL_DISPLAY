@@ -1,12 +1,25 @@
 #!/usr/bin/env bash
-echo "Start update code routine!"
-fetch=$(sudo git fetch)
+set -e
 
-if [[ -z "$fetch" ]] 
-then 
-    echo "Local Repo up to date, no git pull needed" && exit 1 
-else 
-    sudo git pull || echo "git pull failed, exiting." ; exit 1 
+local_branch=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD)
+remote_branch=$(git rev-parse --abbrev-ref --symbolic-full-name @{u})
+remote=$(git config branch.$local_branch.remote)
+
+echo "Fetching from $remote..."
+git fetch $remote
+
+if git merge-base --is-ancestor $remote_branch HEAD; then
+    echo 'Already up-to-date'
+    exit 0
 fi
-echo "Make source code"
-make  
+
+if git merge-base --is-ancestor HEAD $remote_branch; then
+    echo 'Fast-forward possible. Merging...'
+    git merge --ff-only --stat $remote_branch
+else
+    echo 'Fast-forward not possible. Rebasing...'
+    git rebase --preserve-merges --stat $remote_branch
+fi
+
+echo "Make the source code!"
+make
