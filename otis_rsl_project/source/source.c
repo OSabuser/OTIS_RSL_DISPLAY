@@ -120,7 +120,7 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
-    serial_port_init(&serial, &file_descriptor);
+    //serial_port_init(&serial, &file_descriptor);
 	
 	char uart_rx_buffer[8];
 	#if 1
