@@ -11,7 +11,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <termios.h>
 
+ 
 #include "backgroundLayer.h"
 #include "imageLayer.h"
 #include "key.h"
@@ -39,9 +44,52 @@ static void print_usage(void)
 }
 
 
+	struct termios serial;
+	
+	void serial_port_init(struct termios *handle)
+	{
+		char buffer[8];
+    
+		int fd = open("/dev/ttyAMA0", O_RDWR | O_NOCTTY | O_NDELAY);
+    
+		if(fd == -1)
+		{
+            fprintf(stderr, RED("Unable to open /dev/ttyAMA0 file \n"));	
+            exit(EXIT_FAILURE);
+		}
+		else printf("/dev/ttyAMA0 opening was successful \n");
+    
+    
+		if(tcgetattr(fd, handle) < 0)
+		{
+            fprintf(stderr, RED("Unable to get /dev/ttyAMA0 config \n"));	
+            exit(EXIT_FAILURE);
+		}
+    
+		//Serial port setting up
+		handle->c_iflag = 0;
+		handle->c_oflag = 0;
+		handle->c_lflag = 0;
+		handle->c_cflag = 0;
+		handle->c_cc[VMIN] = 0;
+		handle->c_cc[VTIME] = 0;
+		handle->c_cflag = B9600 | CS8 | CREAD;
+    
+		//Apply settings
+		tcsetattr(fd, TCSANOW, handle);
+		
+		close(fd);
+			
+	}
+    
+    
+    
+  
+ 
+ 
+ 
 int main(int argc, char *argv[])
 {
-	printf("TEst!\n");
     bcm_host_init();
 
 	/* Get command line arguments */
@@ -69,7 +117,7 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
-    //---------------------------------------------------------------------
+    serial_port_init(&serial);
 
     while (1)
     {
