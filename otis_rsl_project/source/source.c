@@ -49,27 +49,6 @@
 volatile bool run = true;
 
 
-//-------------------------------------------------------------------------
-
-void usage(void)
-{
-    fprintf(stderr, "Usage: %s ", program);
-    fprintf(stderr, "[-b <RGBA>] [-d <number>] [-l <layer>] ");
-    fprintf(stderr, "[-x <offset>] [-y <offset>] <file.png>\n");
-    fprintf(stderr, "    -b - set background colour 16 bit RGBA\n");
-    fprintf(stderr, "         e.g. 0x000F is opaque black\n");
-    fprintf(stderr, "    -d - Raspberry Pi display number\n");
-    fprintf(stderr, "    -l - DispmanX layer number\n");
-    fprintf(stderr, "    -x - offset (pixels from the left)\n");
-    fprintf(stderr, "    -y - offset (pixels from the top)\n");
-    fprintf(stderr, "    -t - timeout in ms\n");
-    fprintf(stderr, "    -n - non-interactive mode\n");
-
-    exit(EXIT_FAILURE);
-}
-
-//-------------------------------------------------------------------------
-
 int main(int argc, char *argv[])
 {
 
@@ -103,6 +82,8 @@ int main(int argc, char *argv[])
 
     // Sleep for 10 milliseconds every run-loop
     const int sleepMilliseconds = 10;
+	uint32_t currentTime = 0;
+	uint32_t timeout = 0;
 
     while (run)
     {
