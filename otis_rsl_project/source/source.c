@@ -41,7 +41,6 @@ static void print_usage(void)
 
 int main(int argc, char *argv[])
 {
-
     bcm_host_init();
 
 	/* Get command line arguments */
