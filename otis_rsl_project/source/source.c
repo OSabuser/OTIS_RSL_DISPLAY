@@ -48,8 +48,7 @@ static void print_usage(void)
 	
 	void serial_port_init(struct termios *handle, int *fd)
 	{
-		char buffer[8];
-    
+
 		*fd = open("/dev/ttyAMA0", O_RDWR | O_NOCTTY | O_NDELAY);
     
 		if(*fd == -1)
@@ -127,7 +126,22 @@ int main(int argc, char *argv[])
 
     while (1)
     {
-        
+        int x;	
+		/*Receive first char */
+		while ((x = read(file_descriptor, uart_rx_buffer, 1)) != 1 ) 
+		{
+			
+		}
+		
+		if (uart_rx_buffer[0] != '!') 
+		{
+			continue;   
+		}
+
+		int bytes_read = read(file_descriptor, uart_rx_buffer, 9);
+		
+		printf("Receive:%s \n, %d bytes\n", uart_rx_buffer, bytes_read);
+	
        
     }
 
