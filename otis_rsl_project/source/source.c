@@ -27,6 +27,15 @@
 
 volatile bool run = true;
 
+static void print_usage(void)
+{
+	fprintf(stderr, "Incorrect command line option %s\n", work_mode);
+	fprintf(stderr, "Usage: %s ", program);
+	fprintf(stderr, "[-dynamic or -static]\n");
+	fprintf(stderr, "    -dynamic - transparent background for videoplay\n");
+	fprintf(stderr, "    -static -  user background image overlays video frames\n");	
+}
+
 
 int main(int argc, char *argv[])
 {
@@ -39,7 +48,8 @@ int main(int argc, char *argv[])
 	
 	if(work_mode == NULL)
 	{
-		fprintf(stderr, RED("OOOOOOOOPS!!!!"));
+		print_usage();
+		exit(EXIT_FAILURE);
 	}
     
     if(strcmp(work_mode, "-static") == 0)
@@ -53,11 +63,7 @@ int main(int argc, char *argv[])
     }
     else
     {
-        fprintf(stderr, "Incorrect command line option %s\n", work_mode);
-		fprintf(stderr, "Usage: %s ", program);
-		fprintf(stderr, "[-dynamic or -static]");
-		fprintf(stderr, "    -dynamic - transparent background for videoplay");
-		fprintf(stderr, "    -static -  user background image overlays video frames");
+        print_usage();
         exit(EXIT_FAILURE);
     }
 
