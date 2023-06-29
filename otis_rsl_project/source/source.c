@@ -31,11 +31,11 @@ const char *work_mode = NULL;
 
 static void print_usage(void)
 {
-	fprintf(stderr, "Incorrect command line option %s\n", work_mode);
-	fprintf(stderr, "Usage: %s ", program);
-	fprintf(stderr, "[-dynamic or -static]\n");
-	fprintf(stderr, "    -dynamic - transparent background for videoplay\n");
-	fprintf(stderr, "    -static -  user background image overlays video frames\n");	
+	fprintf(stderr, RED("Incorrect command line option %s\n"), work_mode);
+	fprintf(stderr, RED("Usage: %s "), program);
+	fprintf(stderr, RED("[-dynamic or -static]\n"));
+	fprintf(stderr, RED("    -dynamic - transparent background for videoplay\n"));
+	fprintf(stderr, RED("    -static -  user background image overlays video frames\n"));	
 }
 
 
@@ -43,8 +43,8 @@ int main(int argc, char *argv[])
 {
 
     bcm_host_init();
-	fprintf(stderr, RED("STD ERROR IO TEST!"));
-	
+
+	/* Get command line arguments */
 	program = basename(argv[0]);
 	work_mode = argv[1];
 	
