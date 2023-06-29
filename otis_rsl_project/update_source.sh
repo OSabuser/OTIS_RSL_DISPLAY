@@ -23,3 +23,4 @@ fi
 
 echo "Make the source code!"
 make
+cd source 

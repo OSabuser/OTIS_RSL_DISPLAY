@@ -89,8 +89,8 @@ static void print_usage(void)
  
 int main(int argc, char *argv[])
 {
-	struct termios serial;
-	int file_descriptor;
+	//struct termios serial;
+	//int file_descriptor;
 	
 	
     bcm_host_init();
@@ -123,22 +123,55 @@ int main(int argc, char *argv[])
     serial_port_init(&serial, &file_descriptor);
 	
 	char uart_rx_buffer[8];
+	#if 1
+   /*mini UART, TX-14, RX-15 */
+	struct termios serial;
+    
+    int fd = open("/dev/ttyAMA0", O_RDWR | O_NOCTTY | O_NDELAY);
+    
+    if(fd == -1)
+    {
+        fprintf(stderr, RED("Unable to open /dev/ttyAMA0 file \n"));	
+        exit(EXIT_FAILURE);
+    }
+    else printf("/dev/ttyAMA0 opening was successful \n");
+    
+    
+    if(tcgetattr(fd, &serial) < 0)
+    {
+        fprintf(stderr, RED("Unable to get /dev/ttyAMA0 config \n"));	
+        exit(EXIT_FAILURE);
+    }
+    
+    //Serial port setting up
+    serial.c_iflag = 0;
+    serial.c_oflag = 0;
+    serial.c_lflag = 0;
+    serial.c_cflag = 0;
+    serial.c_cc[VMIN] = 0;
+    serial.c_cc[VTIME] = 0;
+    serial.c_cflag = B9600 | CS8 | CREAD;
+    
+    //Apply settings
+    tcsetattr(fd, TCSANOW, &serial);
+    
+ #endif  
 
     while (1)
     {
         int x;	
 		/*Receive first char */
-		while ((x = read(file_descriptor, uart_rx_buffer, 1)) != 1 ) 
+		while ((x = read(fd, uart_rx_buffer, 1)) != 1 ) 
 		{
 			
 		}
 		
-		if (uart_rx_buffer[0] != '!') 
+		//if (uart_rx_buffer[0] != '!') 
 		{
-			continue;   
+			//continue;   
 		}
 
-		int bytes_read = read(file_descriptor, uart_rx_buffer, 9);
+		int bytes_read = read(fd, uart_rx_buffer, 9);
 		
 		printf("Receive:%s \n, %d bytes\n", uart_rx_buffer, bytes_read);
 	
