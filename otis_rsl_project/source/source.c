@@ -26,6 +26,7 @@
 
 
 volatile bool run = true;
+const char *program = NULL;
 
 static void print_usage(void)
 {
@@ -43,7 +44,7 @@ int main(int argc, char *argv[])
     bcm_host_init();
 	fprintf(stderr, RED("STD ERROR IO TEST!"));
 	
-	const char *program = basename(argv[0]);
+	program = basename(argv[0]);
 	const char *work_mode = argv[1];
 	
 	if(work_mode == NULL)
