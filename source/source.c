@@ -60,7 +60,7 @@ static void print_usage(void)
 		else printf("/dev/ttyAMA0 opening was successful \n");
     
     
-		if(tcgetattr(*fd, &handle) < 0)
+		if(tcgetattr(fd, &handle) < 0)
 		{
             fprintf(stderr, RED("Unable to get /dev/ttyAMA0 config \n"));	
             exit(EXIT_FAILURE);
@@ -76,7 +76,11 @@ static void print_usage(void)
 		handle.c_cflag = B9600 | CS8 | CREAD;
     
 		//Apply settings
-		tcsetattr(*fd, TCSANOW, &handle);
+		if (tcsetattr(fd, TCSANOW, &handle) < 0)
+		{
+			fprintf(stderr, RED("Unable to set /dev/ttyAMA0 attributes \n"));	
+            exit(EXIT_FAILURE);
+		}
 		
 	}
     
