@@ -45,45 +45,7 @@ static void print_usage(void)
 
 
 	
-	
-	void serial_port_init(int *fd)
-	{
-		struct termios handle;
-		
-		*fd = open("/dev/ttyAMA0", O_RDWR | O_NOCTTY | O_NDELAY);
-    
-		if(*fd == -1)
-		{
-            fprintf(stderr, RED("Unable to open /dev/ttyAMA0 file \n"));	
-            exit(EXIT_FAILURE);
-		}
-		else printf("/dev/ttyAMA0 opening was successful \n");
-    
-    
-		if(tcgetattr(fd, &handle) < 0)
-		{
-            fprintf(stderr, RED("Unable to get /dev/ttyAMA0 config \n"));	
-            exit(EXIT_FAILURE);
-		}
-    
-		//Serial port setting up
-		handle.c_iflag = 0;
-		handle.c_oflag = 0;
-		handle.c_lflag = 0;
-		handle.c_cflag = 0;
-		handle.c_cc[VMIN] = 0;
-		handle.c_cc[VTIME] = 0;
-		handle.c_cflag = B9600 | CS8 | CREAD;
-    
-		//Apply settings
-		if (tcsetattr(fd, TCSANOW, &handle) < 0)
-		{
-			fprintf(stderr, RED("Unable to set /dev/ttyAMA0 attributes \n"));	
-            exit(EXIT_FAILURE);
-		}
-		
-	}
-    
+
     
     
   
@@ -92,10 +54,6 @@ static void print_usage(void)
  
 int main(int argc, char *argv[])
 {
-	
-	int file_descriptor;
-	
-	
     bcm_host_init();
 
 	/* Get command line arguments */
@@ -123,13 +81,10 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
-    serial_port_init(&file_descriptor);
-	
-	
-	#if 0
    /*mini UART, TX-14, RX-15 */
 	struct termios serial;
-    
+    char uart_rx_buffer[10];
+	
     int fd = open("/dev/ttyAMA0", O_RDWR | O_NOCTTY | O_NDELAY);
     
     if(fd == -1)
@@ -156,17 +111,22 @@ int main(int argc, char *argv[])
     serial.c_cflag = B115200 | CS8 | CREAD;
     
     //Apply settings
-    tcsetattr(fd, TCSANOW, &serial);
+	if (tcsetattr(fd, TCSANOW, &serial) < 0)
+	{
+		fprintf(stderr, RED("Unable to set /dev/ttyAMA0 attributes \n"));	
+        exit(EXIT_FAILURE);
+	}
     
- #endif  
+ 
 	
-	char uart_rx_buffer[10];
+	
 	
     while (1)
     {
         int x;	
+		
 		/*Receive first char */
-		while ((x = read(file_descriptor, uart_rx_buffer, 1)) != 1 ) 
+		while ((x = read(fd, uart_rx_buffer, 1)) != 1 ) 
 		{
 			
 		}
@@ -175,8 +135,9 @@ int main(int argc, char *argv[])
 		{
 			continue;   
 		}
-
-		int bytes_read = read(file_descriptor, uart_rx_buffer, 9);
+		
+		/* Receive packet from MCU */
+		int bytes_read = read(fd, uart_rx_buffer, 9);
 		
 		printf("Receive:%s, %d bytes\n", uart_rx_buffer, bytes_read);
 	
