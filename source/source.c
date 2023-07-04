@@ -46,9 +46,10 @@ static void print_usage(void)
 
 	
 	
-	void serial_port_init(struct termios *handle, int *fd)
+	void serial_port_init(int *fd)
 	{
-
+		struct termios handle;
+		
 		*fd = open("/dev/ttyAMA0", O_RDWR | O_NOCTTY | O_NDELAY);
     
 		if(*fd == -1)
@@ -59,23 +60,23 @@ static void print_usage(void)
 		else printf("/dev/ttyAMA0 opening was successful \n");
     
     
-		if(tcgetattr(*fd, handle) < 0)
+		if(tcgetattr(*fd, &handle) < 0)
 		{
             fprintf(stderr, RED("Unable to get /dev/ttyAMA0 config \n"));	
             exit(EXIT_FAILURE);
 		}
     
 		//Serial port setting up
-		handle->c_iflag = 0;
-		handle->c_oflag = 0;
-		handle->c_lflag = 0;
-		handle->c_cflag = 0;
-		handle->c_cc[VMIN] = 0;
-		handle->c_cc[VTIME] = 0;
-		handle->c_cflag = B9600 | CS8 | CREAD;
+		handle.c_iflag = 0;
+		handle.c_oflag = 0;
+		handle.c_lflag = 0;
+		handle.c_cflag = 0;
+		handle.c_cc[VMIN] = 0;
+		handle.c_cc[VTIME] = 0;
+		handle.c_cflag = B9600 | CS8 | CREAD;
     
 		//Apply settings
-		tcsetattr(*fd, TCSANOW, handle);
+		tcsetattr(*fd, TCSANOW, &handle);
 		
 	}
     
@@ -87,7 +88,7 @@ static void print_usage(void)
  
 int main(int argc, char *argv[])
 {
-	struct termios serial;
+	
 	int file_descriptor;
 	
 	
@@ -118,7 +119,7 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
-    serial_port_init(&serial, &file_descriptor);
+    serial_port_init(&file_descriptor);
 	
 	
 	#if 0
