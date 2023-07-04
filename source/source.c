@@ -107,13 +107,13 @@ int uart_start(struct UartDevice* dev, bool canonical) {
 		printf("%s: failed to open UART device\r\n", __func__);
 		return fd;
 	}
-
+	printf("#1\n");
 	tty = malloc(sizeof(*tty));
 	if (!tty) {
 		printf("%s: failed to allocate UART TTY instance\r\n", __func__);
 		return -ENOMEM;
 	}
-
+	printf("#2\n");
 	memset(tty, 0, sizeof(*tty));
 
 	/*
@@ -142,7 +142,7 @@ int uart_start(struct UartDevice* dev, bool canonical) {
         tty->c_cc[VTIME] = 0;
         tty->c_cc[VMIN] = 1;
     }
-
+	printf("#3\n");
 	/*
 	 * Flush port.
 	 */
@@ -151,6 +151,7 @@ int uart_start(struct UartDevice* dev, bool canonical) {
 	/*
 	 * Apply attributes.
 	 */
+	printf("#4\n");
 	rc = tcsetattr(fd, TCSANOW, tty);
 	if (rc) {
 		printf("%s: failed to set attributes\r\n", __func__);
