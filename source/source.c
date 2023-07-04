@@ -117,7 +117,11 @@ int main(int argc, char *argv[])
 	
     while (1)
     {
-	
+		read_data_len = uart_reads(&dev, read_data, 15);
+
+		if (read_data_len > 0) {
+			printf("%s", read_data);
+		}
        
     }
 
