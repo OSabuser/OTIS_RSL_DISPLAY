@@ -21,7 +21,7 @@
 #include "imageLayer.h"
 #include "key.h"
 #include "loadpng.h"
-#include <fcntl.h>
+
 #include "bcm_host.h"
 
 //-------------------------------------------------------------------------
@@ -62,133 +62,12 @@ inline bool is_val_in_range(int x, int x0, int x1)
 	return false;
 	
 }
-
-
-#define MAX_READ_SIZE 12U
-
-
+    
+    
   
-struct UartDevice {
-	char* filename;
-	int rate;
-
-	int fd;
-	struct termios *tty;
-};
-
-
-
-/*
- * Stop the UART device.
- *
- * @param dev points to the UART device to be stopped
- */
-void uart_stop(struct UartDevice* dev) {
-	free(dev->tty);
-}
-
-   
-/*
- * Start the UART device.
- *
- * @param dev points to the UART device to be started, must have filename and rate populated
- * @param canonical whether to define some compatibility flags for a canonical interface
- *
- * @return - 0 if the starting procedure succeeded
- *         - negative if the starting procedure failed
- */
-int uart_start(struct UartDevice* dev, bool canonical) {
-	struct termios *tty;
-	int fd;
-	int rc;
-	printf("Try to open %s \n", dev->filename);
-	fd = open(dev->filename, O_RDWR | O_NOCTTY| O_NDELAY);
-	if (fd < 0) {
-		printf("%s: failed to open UART device\r\n", __func__);
-		return fd;
-	}
-	printf("#1\n");
-	tty = malloc(sizeof(*tty));
-	if (!tty) {
-		printf("%s: failed to allocate UART TTY instance\r\n", __func__);
-		return -ENOMEM;
-	}
-	printf("#2\n");
-	memset(tty, 0, sizeof(*tty));
-
-	/*
-	 * Set baud-rate.
-	 */
-	tty->c_cflag |= dev->rate;
-
-    /* Ignore framing and parity errors in input. */
-    tty->c_iflag |=  IGNPAR;
-
-    /* Use 8-bit characters. This too may affect standard streams,
-     * but any sane C library can deal with 8-bit characters. */
-    tty->c_cflag |=  CS8;
-
-    /* Enable receiver. */
-    tty->c_cflag |=  CREAD;
-
-    if (canonical) {
-        /* Enable canonical mode.
-         * This is the most important bit, as it enables line buffering etc. */
-        tty->c_lflag |= ICANON;
-    } else {
-        /* To maintain best compatibility with normal behaviour of terminals,
-         * we set TIME=0 and MAX=1 in noncanonical mode. This means that
-         * read() will block until at least one byte is available. */
-        tty->c_cc[VTIME] = 0;
-        tty->c_cc[VMIN] = 1;
-    }
-	printf("#3\n");
-	/*
-	 * Flush port.
-	 */
-	tcflush(fd, TCIFLUSH);
-
-	/*
-	 * Apply attributes.
-	 */
-	printf("#4\n");
-	rc = tcsetattr(fd, TCSANOW, tty);
-	if (rc) {
-		printf("%s: failed to set attributes\r\n", __func__);
-		return rc;
-	}
-
-	dev->fd = fd;
-	dev->tty = tty;
-
-	return 0;
-}  
  
  
- /*
- * Read a string from the UART device.
- *
- * @param dev points to the UART device to be read from
- * @param buf points to the start of buffer to be read into
- * @param buf_len length of the buffer to be read
- *
- * @return - number of bytes read if the read procedure succeeded
- *         - negative if the read procedure failed
- */
-int uart_reads(struct UartDevice* dev, char *buf, size_t buf_len) {
-	int rc;
-
-	rc = read(dev->fd, buf, buf_len - 1);
-	if (rc < 0) {
-		printf("%s: failed to read uart data\r\n", __func__);
-		return rc;
-	}
-
-	buf[rc] = '\0';
-	return rc;
-}
-
-
+ 
 int main(int argc, char *argv[])
 {
     bcm_host_init();
@@ -217,35 +96,89 @@ int main(int argc, char *argv[])
         print_usage();
         exit(EXIT_FAILURE);
     }
-
+	
+   /*mini UART, TX-14, RX-15 */
+	struct termios serial;
+    char uart_rx_buffer[10];
+	
+    int fd = open("/dev/ttyAMA0", O_RDWR | O_NOCTTY | O_NDELAY);
+    
+    if(fd == -1)
+    {
+        fprintf(stderr, RED("Unable to open /dev/ttyAMA0 file \n"));	
+        exit(EXIT_FAILURE);
+    }
+    else printf("/dev/ttyAMA0 opening was successful \n");
+    
+    
+    if(tcgetattr(fd, &serial) < 0)
+    {
+        fprintf(stderr, RED("Unable to get /dev/ttyAMA0 config \n"));	
+        exit(EXIT_FAILURE);
+    }
+    
+    //Serial port setting up
+    serial.c_iflag = 0;
+    serial.c_oflag = 0;
+    serial.c_lflag = 0;
+    serial.c_cflag = 0;
+    serial.c_cc[VMIN] = 0;
+    serial.c_cc[VTIME] = 0;
+    serial.c_cflag = B115200 | CS8 | CREAD;
+    
+    //Apply settings
+	if (tcsetattr(fd, TCSANOW, &serial) < 0)
+	{
+		fprintf(stderr, RED("Unable to set /dev/ttyAMA0 attributes \n"));	
+        exit(EXIT_FAILURE);
+	}
+    
  
-	struct UartDevice dev;
-	int rc;
-
-	dev.filename = "/dev/ttyAMA0";
-	dev.rate = B115200;
-
-	rc = uart_start(&dev, true);
-	if (rc) {
-		printf("FAILED!\r\n");
-		return rc;
-	}
-
-	char read_data[MAX_READ_SIZE];
-	size_t read_data_len;
-
-	printf("OK!\r\n");
-
-
-    while (1) {
-		read_data_len = uart_reads(&dev, read_data, MAX_READ_SIZE);
-
-		if (read_data_len > 0) {
-			printf("%s", read_data);
+	
+	
+	
+	
+    while (1)
+    {
+        int x;	
+		
+		/* Ловим правильный первый байт*/
+		while ((x = read(fd, uart_rx_buffer, 1)) != 1 ) {}
+	
+			
+		if (uart_rx_buffer[0] != '!') 
+		{
+			continue;   
 		}
-	}
-
-	uart_stop(&dev);
+		
+		/* Чтение остальной части пакета */
+		int bytes_read = read(fd, uart_rx_buffer, 9);
+		printf("Raw message: %s, %d bytes\n", uart_rx_buffer, bytes_read);
+		
+		/* Проверка корректности пакета*/
+		bool is_packet_valid = (bytes_read == 7 && (uart_rx_buffer[0]  == 'm' && uart_rx_buffer[1]  == 'F' && uart_rx_buffer[bytes_read - 2]  == 'E' && uart_rx_buffer[bytes_read - 1]  == 'm'))? true : false;
+		
+		if(is_packet_valid)
+		{
+			static int floor_state[2], arrow_state[2];
+			
+			is_packet_valid = false;
+			printf("True message: %s, %d bytes\n", uart_rx_buffer, bytes_read);
+			
+			int msb = uart_rx_buffer[FLOOR_H_POS] - '0', lsb = uart_rx_buffer[FLOOR_H_POS] - '0';
+			
+			if(is_val_in_range(msb, 0, 10) && is_val_in_range(lsb, 0, 10))
+			{
+				floor_state[0] = msb * 10 + lsb;	
+				printf("True floor number: %d\n", floor_state[0]);				
+			}
+			
+					
+		}
+		
+	
+       
+    }
 
 
 
