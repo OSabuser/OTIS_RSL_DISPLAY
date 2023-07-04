@@ -123,7 +123,7 @@ int main(int argc, char *argv[])
     serial.c_lflag = 0;
     serial.c_cflag = 0;
     serial.c_cc[VMIN] = 0;
-    serial.c_cc[VTIME] = 10;
+    serial.c_cc[VTIME] = 0;
     serial.c_cflag = B115200 | CS8 | CREAD;
     
     //Apply settings
