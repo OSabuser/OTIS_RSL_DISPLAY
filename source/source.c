@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
 	
    /*mini UART, TX-14, RX-15 */
 	struct termios serial;
-    char uart_rx_buffer[10];
+    char uart_rx_buffer[8];
 	
     int fd = open("/dev/ttyAMA0", O_RDWR | O_NOCTTY | O_NDELAY);
     
@@ -152,7 +152,7 @@ int main(int argc, char *argv[])
 		}
 		
 		/* Чтение остальной части пакета */
-		int bytes_read = read(fd, uart_rx_buffer, 9);
+		int bytes_read = read(fd, uart_rx_buffer, 8);
 		printf("Raw message: %s, %d bytes\n", uart_rx_buffer, bytes_read);
 		
 		/* Проверка корректности пакета*/
