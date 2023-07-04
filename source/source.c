@@ -23,7 +23,7 @@
 #include "loadpng.h"
 
 #include "bcm_host.h"
-#include "uart.h"
+
 //-------------------------------------------------------------------------
 
 #define NDEBUG
@@ -98,30 +98,86 @@ int main(int argc, char *argv[])
     }
 	
    /*mini UART, TX-14, RX-15 */
-	struct UartDevice dev;
-	int rc;
-
-	dev.filename = "/dev/ttyAMA0";
-	dev.rate = B9600;
-
-	rc = uart_start(&dev, true);
-	if (rc) {
-		return rc;
+	struct termios serial;
+    char uart_rx_buffer[10];
+	
+    int fd = open("/dev/ttyAMA0", O_RDWR | O_NOCTTY | O_NDELAY);
+    
+    if(fd == -1)
+    {
+        fprintf(stderr, RED("Unable to open /dev/ttyAMA0 file \n"));	
+        exit(EXIT_FAILURE);
+    }
+    else printf("/dev/ttyAMA0 opening was successful \n");
+    
+    
+    if(tcgetattr(fd, &serial) < 0)
+    {
+        fprintf(stderr, RED("Unable to get /dev/ttyAMA0 config \n"));	
+        exit(EXIT_FAILURE);
+    }
+    
+    //Serial port setting up
+    serial.c_iflag = 0;
+    serial.c_oflag = 0;
+    serial.c_lflag = 0;
+    serial.c_cflag = 0;
+    serial.c_cc[VMIN] = 0;
+    serial.c_cc[VTIME] = 0;
+    serial.c_cflag = B9600 | CS8 | CREAD;
+    
+    //Apply settings
+	if (tcsetattr(fd, TCSANOW, &serial) < 0)
+	{
+		fprintf(stderr, RED("Unable to set /dev/ttyAMA0 attributes \n"));	
+        exit(EXIT_FAILURE);
 	}
-
-	char read_data[10];
-	size_t read_data_len;
-
-	printf("UART DEMO\r\n");
+    
 
 	
     while (1)
     {
-		read_data_len = uart_reads(&dev, read_data, 10);
-
-		if (read_data_len > 0) {
-			printf("%s", read_data);
+       
+		int x;	
+		
+		tcflush(fd, TCIFLUSH); /*Очистка старых данных в буфере*/
+		
+		while ((x = read(fd, uart_rx_buffer, 1)) != 1 ) {} /* Ловим правильный первый байт*/
+	
+			
+		if (uart_rx_buffer[0] != '!') 
+		{
+			continue;   
 		}
+		
+		
+		/* Чтение остальной части пакета */
+		int bytes_read = read(fd, uart_rx_buffer, 9 - 1);
+		uart_rx_buffer[bytes_read] = '\0'; 
+		printf("Raw message: %s, %d bytes\n", uart_rx_buffer, bytes_read);
+		
+		/* Проверка корректности пакета*/
+		bool is_packet_valid = (bytes_read == 7 && (uart_rx_buffer[0]  == 'm' && uart_rx_buffer[1]  == 'F' && uart_rx_buffer[bytes_read - 1]))? true : false;
+		
+		if(is_packet_valid)
+		{
+			static int floor_state[2], arrow_state[2];
+			
+			is_packet_valid = false;
+			printf("True message: %s, %d bytes\n", uart_rx_buffer, bytes_read);
+			
+			int msb = uart_rx_buffer[FLOOR_H_POS] - '0', lsb = uart_rx_buffer[FLOOR_L_POS] - '0';
+			
+			if(is_val_in_range(msb, 0, 10) && is_val_in_range(lsb, 0, 10))
+			{
+				floor_state[0] = msb * 10 + lsb;	
+				printf("True floor number: %d\n", floor_state[0]);				
+			}
+			
+					
+		}
+		
+	
        
     }
 
