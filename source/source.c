@@ -140,8 +140,8 @@ int main(int argc, char *argv[])
 	
     while (1)
     {
-  
-		
+       
+		tcflush(fd, TCIFLUSH);
 		/* Чтение остальной части пакета */
 		int bytes_read = read(fd, uart_rx_buffer, 8);
 		printf("Raw message: %s, %d bytes\n", uart_rx_buffer, bytes_read);
