@@ -156,7 +156,9 @@ int main(int argc, char *argv[])
     tcsetattr(fd, TCSANOW, &serial);
     
  #endif  
-
+	
+	char uart_rx_buffer[10];
+	
     while (1)
     {
         int x;	
