@@ -140,19 +140,10 @@ int main(int argc, char *argv[])
 	
     while (1)
     {
-        int x;	
-		tcflush(fd, TCIFLUSH);
-		/* Ловим правильный первый байт*/
-		while ((x = read(fd, uart_rx_buffer, 1)) != 1 ) {}
-	
-			
-		if (uart_rx_buffer[0] != '!') 
-		{
-			continue;   
-		}
+  
 		
 		/* Чтение остальной части пакета */
-		int bytes_read = read(fd, uart_rx_buffer, 9);
+		int bytes_read = read(fd, uart_rx_buffer, 8);
 		printf("Raw message: %s, %d bytes\n", uart_rx_buffer, bytes_read);
 		
 		/* Проверка корректности пакета*/
