@@ -133,9 +133,18 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
 	}
     
- 
+ #if 0
+	 int x;	
+		tcflush(fd, TCIFLUSH);
+		/* Ловим правильный первый байт*/
+		while ((x = read(fd, uart_rx_buffer, 1)) != 1 ) {}
 	
-	
+			
+		if (uart_rx_buffer[0] != '!') 
+		{
+			continue;   
+		}
+#endif	
 	
 	
     while (1)
@@ -144,7 +153,7 @@ int main(int argc, char *argv[])
 		tcflush(fd, TCIFLUSH);
 		/* Чтение остальной части пакета */
 		int bytes_read = read(fd, uart_rx_buffer, 8);
-		printf("Raw message: %s, %d bytes\n", uart_rx_buffer, bytes_read);
+		if(bytes_read > 0) printf("Raw message: %s, %d bytes\n", uart_rx_buffer, bytes_read);
 		
 		/* Проверка корректности пакета*/
 		bool is_packet_valid = (bytes_read == 7 && (uart_rx_buffer[0]  == 'm' && uart_rx_buffer[1]  == 'F' && uart_rx_buffer[bytes_read - 2]  == 'E' && uart_rx_buffer[bytes_read - 1]  == 'm'))? true : false;
