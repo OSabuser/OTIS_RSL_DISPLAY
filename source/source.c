@@ -104,12 +104,12 @@ int main(int argc, char *argv[])
 	dev.filename = "/dev/ttyAMA0";
 	dev.rate = B9600;
 
-	rc = uart_start(&dev, false);
+	rc = uart_start(&dev, true);
 	if (rc) {
 		return rc;
 	}
 
-	char read_data[15];
+	char read_data[10];
 	size_t read_data_len;
 
 	printf("UART DEMO\r\n");
@@ -117,7 +117,7 @@ int main(int argc, char *argv[])
 	
     while (1)
     {
-		read_data_len = uart_reads(&dev, read_data, 15);
+		read_data_len = uart_reads(&dev, read_data, 10);
 
 		if (read_data_len > 0) {
 			printf("%s", read_data);
