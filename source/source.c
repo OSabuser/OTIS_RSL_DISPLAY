@@ -152,7 +152,7 @@ int main(int argc, char *argv[])
 		
 		
 		/* Чтение остальной части пакета */
-		int bytes_read = read(fd, uart_rx_buffer, 9 - 1);
+		int bytes_read = read(fd, uart_rx_buffer, 7 - 1);
 		uart_rx_buffer[bytes_read] = '\0'; 
 		printf("Raw message: %s, %d bytes\n", uart_rx_buffer, bytes_read);
 		
