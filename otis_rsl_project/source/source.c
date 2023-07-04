@@ -150,7 +150,7 @@ int main(int argc, char *argv[])
     serial.c_cflag = 0;
     serial.c_cc[VMIN] = 0;
     serial.c_cc[VTIME] = 0;
-    serial.c_cflag = B9600 | CS8 | CREAD;
+    serial.c_cflag = B115200 | CS8 | CREAD;
     
     //Apply settings
     tcsetattr(fd, TCSANOW, &serial);
@@ -171,7 +171,7 @@ int main(int argc, char *argv[])
 			continue;   
 		}
 
-		int bytes_read = read(fd, &uart_rx_buffer[1], 8);
+		int bytes_read = read(fd, uart_rx_buffer, 8);
 		
 		printf("Receive:%s, %d bytes\n", uart_rx_buffer, bytes_read);
 	
