@@ -141,7 +141,7 @@ int main(int argc, char *argv[])
 		int bytes_read = read(fd, uart_rx_buffer, 9);
 		
 		/* Check Validity*/
-		bool is_packet_valid = (bytes_read == 7 && (uart_rx_buffer[0]  == 'm' && uart_rx_buffer[1]  == 'F' && uart_rx_buffer[bytes_read - 1]  == 'E' && uart_rx_buffer[bytes_read]  == 'm')? true : false;
+		bool is_packet_valid = (bytes_read == 7 && (uart_rx_buffer[0]  == 'm' && uart_rx_buffer[1]  == 'F' && uart_rx_buffer[bytes_read - 1]  == 'E' && uart_rx_buffer[bytes_read]  == 'm'))? true : false;
 		if(is_packet_valid)
 		{
 			is_packet_valid = false;
