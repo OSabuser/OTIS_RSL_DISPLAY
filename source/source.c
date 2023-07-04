@@ -21,7 +21,7 @@
 #include "imageLayer.h"
 #include "key.h"
 #include "loadpng.h"
-
+#include <fcntl.h>
 #include "bcm_host.h"
 
 //-------------------------------------------------------------------------
@@ -224,15 +224,16 @@ int main(int argc, char *argv[])
 	dev.filename = "/dev/ttyAMA0";
 	dev.rate = B115200;
 
-	rc = uart_start(&dev, false);
+	rc = uart_start(&dev, true);
 	if (rc) {
+		printf("FAILED!\r\n");
 		return rc;
 	}
 
 	char read_data[MAX_READ_SIZE];
 	size_t read_data_len;
 
-	printf("UART DEMO\r\n");
+	printf("OK!\r\n");
 
 
     while (1) {
