@@ -141,7 +141,7 @@ int main(int argc, char *argv[])
     while (1)
     {
         int x;	
-		
+		tcflush(fd, TCIFLUSH);
 		/* Ловим правильный первый байт*/
 		while ((x = read(fd, uart_rx_buffer, 1)) != 1 ) {}
 	
