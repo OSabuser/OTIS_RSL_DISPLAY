@@ -101,7 +101,7 @@ int uart_start(struct UartDevice* dev, bool canonical) {
 	struct termios *tty;
 	int fd;
 	int rc;
-
+	printf("Try to open %s \n", dev->filename);
 	fd = open(dev->filename, O_RDWR | O_NOCTTY);
 	if (fd < 0) {
 		printf("%s: failed to open UART device\r\n", __func__);
@@ -221,10 +221,10 @@ int main(int argc, char *argv[])
  
 	struct UartDevice dev;
 	int rc;
-	printf("Dynamic mode1\n");
+
 	dev.filename = "/dev/ttyAMA0";
 	dev.rate = B115200;
-	 printf("Dynamic mode2\n");
+
 	rc = uart_start(&dev, true);
 	if (rc) {
 		printf("FAILED!\r\n");
