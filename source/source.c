@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
     serial.c_oflag = 0;
     serial.c_lflag = 0;
     serial.c_cflag = 0;
-    serial.c_cc[VMIN] = 8;
+    serial.c_cc[VMIN] = 0;
     serial.c_cc[VTIME] = 0;
     serial.c_cflag = B9600 | CS8 | CREAD;
     
@@ -142,7 +142,7 @@ int main(int argc, char *argv[])
 		
 		tcflush(fd, TCIFLUSH); /*Очистка старых данных в буфере*/
 		
-		while ((x = read(fd, uart_rx_buffer, 9)) != 9 ) {} /* Ловим правильный первый байт*/
+		while ((x = read(fd, uart_rx_buffer, 1)) != 1 ) {} /* Ловим правильный первый байт*/
 	
 			
 		if (uart_rx_buffer[0] != '!') 
@@ -152,7 +152,7 @@ int main(int argc, char *argv[])
 		
 		
 		/* Чтение остальной части пакета */
-		int bytes_read = 0;
+		int bytes_read = read(fd, uart_rx_buffer, 9);
 		 printf("Raw message: %s, %d bytes\n", uart_rx_buffer, bytes_read);
 		
 		/* Проверка корректности пакета*/
