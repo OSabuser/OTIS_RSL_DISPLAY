@@ -132,16 +132,17 @@ int main(int argc, char *argv[])
 		fprintf(stderr, RED("Unable to set /dev/ttyAMA0 attributes \n"));	
         exit(EXIT_FAILURE);
 	}
-    char msg[9];
+    
 
 	
     while (1)
     {
        
 		int x;	
-		tcflush(fd, TCIFLUSH);
-		/* Ловим правильный первый байт*/
-		while ((x = read(fd, uart_rx_buffer, 1)) != 1 ) {}
+		
+		tcflush(fd, TCIFLUSH); /*Очистка старых данных в буфере*/
+		
+		while ((x = read(fd, uart_rx_buffer, 1)) != 1 ) {} /* Ловим правильный первый байт*/
 	
 			
 		if (uart_rx_buffer[0] != '!') 
@@ -151,8 +152,8 @@ int main(int argc, char *argv[])
 		
 		
 		/* Чтение остальной части пакета */
-		int bytes_read = read(fd, msg, 8);
-		 printf("Raw message: %s, %d bytes\n", msg, bytes_read);
+		int bytes_read = read(fd, uart_rx_buffer, 9);
+		 printf("Raw message: %s, %d bytes\n", uart_rx_buffer, bytes_read);
 		
 		/* Проверка корректности пакета*/
 		bool is_packet_valid = (bytes_read == 7 && (uart_rx_buffer[0]  == 'm' && uart_rx_buffer[1]  == 'F' && uart_rx_buffer[bytes_read - 2]  == 'E' && uart_rx_buffer[bytes_read - 1]  == 'm'))? true : false;
