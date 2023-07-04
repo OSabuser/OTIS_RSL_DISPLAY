@@ -122,9 +122,9 @@ int main(int argc, char *argv[])
     serial.c_oflag = 0;
     serial.c_lflag = 0;
     serial.c_cflag = 0;
-    serial.c_cc[VMIN] = 0;
+    serial.c_cc[VMIN] = 10;
     serial.c_cc[VTIME] = 0;
-    serial.c_cflag = B115200 | CS8 | CREAD;
+    serial.c_cflag = B9600 | CS8 | CREAD;
     
     //Apply settings
 	if (tcsetattr(fd, TCSANOW, &serial) < 0)
@@ -142,9 +142,9 @@ int main(int argc, char *argv[])
 		
 		tcflush(fd, TCIFLUSH); /*Очистка старых данных в буфере*/
 		
-		while ((x = read(fd, uart_rx_buffer, 1)) != 1 ) {} /* Ловим правильный первый байт*/
+		while ((x = read(fd, uart_rx_buffer, 10)) != 10 ) {} /* Ловим правильный первый байт*/
 	
-			
+		printf("Raw message №№№№: %s, %d bytes\n", uart_rx_buffer, bytes_read);	
 		if (uart_rx_buffer[0] != '!') 
 		{
 			continue;   
