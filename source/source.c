@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
         print_usage();
         exit(EXIT_FAILURE);
     }
-	
+#if 1	
    /*mini UART, TX-14, RX-15 */
 	struct termios serial;
     char uart_rx_buffer[10];
@@ -132,7 +132,7 @@ int main(int argc, char *argv[])
 		fprintf(stderr, RED("Unable to set /dev/ttyAMA0 attributes \n"));	
         exit(EXIT_FAILURE);
 	}
-    
+ #endif  
  
 	
 	
@@ -143,45 +143,36 @@ int main(int argc, char *argv[])
         int x;	
 		
 		/* Ловим правильный первый байт*/
-		//while ((x = read(fd, uart_rx_buffer, 1)) != 1 ) {}
-		int bytes_read = read(fd, uart_rx_buffer, 9);
+		while ((x = read(fd, uart_rx_buffer, 1)) != 1 ) {}
+	
 			
-		if (uart_rx_buffer[0] != '!' && uart_rx_buffer[8] != 'm') 
+		if (uart_rx_buffer[0] != '!') 
 		{
-			memset((void*)uart_rx_buffer, '0', sizeof(uart_rx_buffer)/sizeof(uart_rx_buffer[0]));
 			continue;   
 		}
-		else
+		
+		/* Чтение остальной части пакета */
+		int bytes_read = read(fd, uart_rx_buffer, 9);
+		
+		/* Проверка корректности пакета*/
+		bool is_packet_valid = (bytes_read == 7 && (uart_rx_buffer[0]  == 'm' && uart_rx_buffer[1]  == 'F' && uart_rx_buffer[bytes_read - 1]  == 'E' && uart_rx_buffer[bytes_read]  == 'm'))? true : false;
+		if(is_packet_valid)
 		{
-			/* Чтение остальной части пакета */
-		
-			printf("Raw message: %s, %d bytes\n", uart_rx_buffer, bytes_read);
-		
-			/* Проверка корректности пакета*/
-			bool is_packet_valid = (bytes_read == 7 && (uart_rx_buffer[0]  == 'm' && uart_rx_buffer[1]  == 'F' && uart_rx_buffer[6]  == 'E' && uart_rx_buffer[7]  == 'm'))? true : false;
-		
-			if(is_packet_valid)
+			static int floor_state[2], arrow_state[2];
+			
+			is_packet_valid = false;
+			printf("True message: %s, %d bytes\n", uart_rx_buffer, bytes_read);
+			
+			int msb = uart_rx_buffer[FLOOR_H_POS] - '0', lsb = uart_rx_buffer[FLOOR_H_POS] - '0';
+			
+			if(is_val_in_range(msb, 0, 10) && is_val_in_range(lsb, 0, 10))
 			{
-				static int floor_state[2], arrow_state[2];
-			
-				is_packet_valid = false;
-				printf("True message: %s, %d bytes\n", uart_rx_buffer, bytes_read);
-			
-				int msb = uart_rx_buffer[FLOOR_H_POS] - '0', lsb = uart_rx_buffer[FLOOR_H_POS] - '0';
-			
-				if(is_val_in_range(msb, 0, 10) && is_val_in_range(lsb, 0, 10))
-				{
-					floor_state[0] = msb * 10 + lsb;	
-					printf("True floor number: %d\n", floor_state[0]);				
-				}
+				floor_state[0] = msb * 10 + lsb;	
+				printf("True floor number: %d\n", floor_state[0]);				
+			}
 			
 					
-			}//if(is_packet_valid)
-			
 		}
-		
-		
-		
 		
 	
        
