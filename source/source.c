@@ -146,7 +146,7 @@ int main(int argc, char *argv[])
 		//while ((x = read(fd, uart_rx_buffer, 1)) != 1 ) {}
 		int bytes_read = read(fd, uart_rx_buffer, 10);
 			
-		if (uart_rx_buffer[0] != '!' && uart_rx_buffer[9] != 'm') 
+		if (uart_rx_buffer[0] != '!' && uart_rx_buffer[8] != 'm') 
 		{
 			memset((void*)uart_rx_buffer, '0', sizeof(uart_rx_buffer)/sizeof(uart_rx_buffer[0]));
 			continue;   
