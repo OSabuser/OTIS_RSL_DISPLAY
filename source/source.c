@@ -27,6 +27,7 @@
 //-------------------------------------------------------------------------
 
 #define NDEBUG
+
 #define RED(string) "\x1b[31m" string "\x1b[0m"
 
 
@@ -80,7 +81,7 @@ int main(int argc, char *argv[])
         print_usage();
         exit(EXIT_FAILURE);
     }
-
+	
    /*mini UART, TX-14, RX-15 */
 	struct termios serial;
     char uart_rx_buffer[10];
@@ -139,7 +140,14 @@ int main(int argc, char *argv[])
 		/* Receive packet from MCU */
 		int bytes_read = read(fd, uart_rx_buffer, 9);
 		
-		printf("Receive:%s, %d bytes\n", uart_rx_buffer, bytes_read);
+		/* Check Validity*/
+		bool is_packet_valid = (bytes_read == 7 && (uart_rx_buffer[0]  == 'm' && uart_rx_buffer[1]  == 'F' && uart_rx_buffer[bytes_read - 1]  == 'E' && uart_rx_buffer[bytes_read]  == 'm')? true : false;
+		if(is_packet_valid)
+		{
+			is_packet_valid = false;
+			printf("True message: %s, %d bytes\n", uart_rx_buffer, bytes_read);
+		}
+		
 	
        
     }
