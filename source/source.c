@@ -63,10 +63,9 @@ inline bool is_val_in_range(int x, int x0, int x1)
 	
 }
 
-#define LOOPBACK_FORMAT "loopback: %s\r\n"
-#define LOOPBACK_FORMAT_LEN strlen(LOOPBACK_FORMAT)
-#define MAX_READ_SIZE 235
-#define MAX_LOOPBACK_SIZE MAX_READ_SIZE + LOOPBACK_FORMAT_LEN  
+
+#define MAX_READ_SIZE 12U
+
 
   
 struct UartDevice {
@@ -78,33 +77,6 @@ struct UartDevice {
 };
 
 
-/*
- * Write data to the UART device.
- *
- * @param dev points to the UART device to be written to
- * @param buf points to the start of buffer to be written from
- * @param buf_len length of the buffer to be written
- *
- * @return - number of bytes written if the write procedure succeeded
- *         - negative if the write procedure failed
- */
-int uart_writen(struct UartDevice* dev, char *buf, size_t buf_len) {
-	return write(dev->fd, buf, buf_len);
-}
-
-/*
- * Write a string to the UART device.
- *
- * @param dev points to the UART device to be written to
- * @param string points to the start of buffer to be written from
- *
- * @return - number of bytes written if the write procedure succeeded
- *         - negative if the write procedure failed
- */
-int uart_writes(struct UartDevice* dev, char *string) {
-	size_t len = strlen(string);
-	return uart_writen(dev, string, len);
-}
 
 /*
  * Stop the UART device.
@@ -249,7 +221,7 @@ int main(int argc, char *argv[])
 	struct UartDevice dev;
 	int rc;
 
-	dev.filename = "/dev/ttyUL1";
+	dev.filename = "/dev/ttyAMA0";
 	dev.rate = B115200;
 
 	rc = uart_start(&dev, false);
@@ -258,21 +230,16 @@ int main(int argc, char *argv[])
 	}
 
 	char read_data[MAX_READ_SIZE];
-	char loopback_data[MAX_LOOPBACK_SIZE];
 	size_t read_data_len;
 
 	printf("UART DEMO\r\n");
-	uart_writes(&dev, "UART DEMO\r\n");
-	
-	
-	
+
+
     while (1) {
 		read_data_len = uart_reads(&dev, read_data, MAX_READ_SIZE);
 
 		if (read_data_len > 0) {
 			printf("%s", read_data);
-			snprintf(loopback_data, MAX_LOOPBACK_SIZE, LOOPBACK_FORMAT, read_data);
-			uart_writes(&dev, loopback_data);
 		}
 	}
 
