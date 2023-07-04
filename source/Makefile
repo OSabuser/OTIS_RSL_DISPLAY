@@ -4,7 +4,7 @@ BIN=source
 CFLAGS+=-Wall -g -O3 -I../common $(shell libpng-config --cflags)
 LDFLAGS+=-L/opt/vc/lib/ -lbcm_host -lm $(shell libpng-config --ldflags) -L../lib -lraspidmx -lraspidmxPng -lwiringPi -lwiringPiDev
 
-INCLUDES+=-I/opt/vc/include/ -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux
+INCLUDES+=-I/opt/vc/include/ -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux -I/home/pi/OTIS_RSL_DISPLAY/source
 
 all: $(BIN)
 
