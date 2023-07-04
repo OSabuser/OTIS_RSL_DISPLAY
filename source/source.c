@@ -156,7 +156,7 @@ int main(int argc, char *argv[])
 		printf("Raw message: %s, %d bytes\n", uart_rx_buffer, bytes_read);
 		
 		/* Проверка корректности пакета*/
-		bool is_packet_valid = (bytes_read == 7 && (uart_rx_buffer[0]  == 'm' && uart_rx_buffer[1]  == 'F' && uart_rx_buffer[bytes_read - 2]  == 'E' && uart_rx_buffer[bytes_read - 1]  == 'm'))? true : false;
+		bool is_packet_valid = (bytes_read == 7 && (uart_rx_buffer[0]  == 'm' && uart_rx_buffer[1]  == 'F' && uart_rx_buffer[6]  == 'E' && uart_rx_buffer[7]  == 'm'))? true : false;
 		
 		if(is_packet_valid)
 		{
@@ -175,6 +175,7 @@ int main(int argc, char *argv[])
 			
 					
 		}
+		memset((void*)uart_rx_buffer, '0', sizeof(uart_rx_buffer)/sizeof(uart_rx_buffer[0]));
 		
 	
        
