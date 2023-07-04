@@ -144,7 +144,7 @@ int main(int argc, char *argv[])
 		
 		while ((x = read(fd, uart_rx_buffer, 10)) != 10 ) {} /* Ловим правильный первый байт*/
 	
-		printf("Raw message №№№№: %s, %d bytes\n", uart_rx_buffer, bytes_read);	
+		printf("Raw message №№№№: %s, %d bytes\n", uart_rx_buffer, x);	
 		if (uart_rx_buffer[0] != '!') 
 		{
 			continue;   
