@@ -163,7 +163,7 @@ int main(int argc, char *argv[])
 			is_packet_valid = false;
 			printf("True message: %s, %d bytes\n", uart_rx_buffer, bytes_read);
 			
-			int msb = atoi(uart_rx_buffer[FLOOR_H_POS]), lsb = atoi(uart_rx_buffer[FLOOR_H_POS]);
+			int msb = uart_rx_buffer[FLOOR_H_POS] - '0', lsb = uart_rx_buffer[FLOOR_H_POS] - '0';
 			
 			if(is_val_in_range(msb, 0, 10) && is_val_in_range(lsb, 0, 10))
 			{
