@@ -156,6 +156,7 @@ int main(int argc, char *argv[])
 		
 		/* Проверка корректности пакета*/
 		bool is_packet_valid = (bytes_read == 7 && (uart_rx_buffer[0]  == 'm' && uart_rx_buffer[1]  == 'F' && uart_rx_buffer[bytes_read - 1]  == 'E' && uart_rx_buffer[bytes_read]  == 'm'))? true : false;
+		
 		if(is_packet_valid)
 		{
 			static int floor_state[2], arrow_state[2];
@@ -171,10 +172,7 @@ int main(int argc, char *argv[])
 				printf("True floor number: %d\n", floor_state[0]);				
 			}
 			
-			
-			
-			unsigned char floor_state[2]
-			
+					
 		}
 		
 	
