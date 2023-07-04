@@ -77,8 +77,6 @@ static void print_usage(void)
 		//Apply settings
 		tcsetattr(*fd, TCSANOW, handle);
 		
-		
-		close(*fd);
 	}
     
     
