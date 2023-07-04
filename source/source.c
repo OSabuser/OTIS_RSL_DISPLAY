@@ -151,7 +151,7 @@ int main(int argc, char *argv[])
 		
 		
 		/* Чтение остальной части пакета */
-		int bytes_read = read(fd, msg, 9);
+		int bytes_read = read(fd, msg, 8);
 		 printf("Raw message: %s, %d bytes\n", msg, bytes_read);
 		
 		/* Проверка корректности пакета*/
