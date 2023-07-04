@@ -102,7 +102,7 @@ int uart_start(struct UartDevice* dev, bool canonical) {
 	int fd;
 	int rc;
 	printf("Try to open %s \n", dev->filename);
-	fd = open(dev->filename, O_RDWR | O_NOCTTY);
+	fd = open(dev->filename, O_RDWR | O_NOCTTY| O_NDELAY);
 	if (fd < 0) {
 		printf("%s: failed to open UART device\r\n", __func__);
 		return fd;
