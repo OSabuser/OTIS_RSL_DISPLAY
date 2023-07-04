@@ -98,7 +98,21 @@ int main(int argc, char *argv[])
     }
 	
    /*mini UART, TX-14, RX-15 */
-	
+	struct UartDevice dev;
+	int rc;
+
+	dev.filename = "/dev/ttyAMA0";
+	dev.rate = B9600;
+
+	rc = uart_start(&dev, false);
+	if (rc) {
+		return rc;
+	}
+
+	char read_data[15];
+	size_t read_data_len;
+
+	printf("UART DEMO\r\n");
 
 	
     while (1)
