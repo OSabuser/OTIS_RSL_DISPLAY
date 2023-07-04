@@ -221,10 +221,10 @@ int main(int argc, char *argv[])
  
 	struct UartDevice dev;
 	int rc;
-
+	printf("Dynamic mode1\n");
 	dev.filename = "/dev/ttyAMA0";
 	dev.rate = B115200;
-
+	 printf("Dynamic mode2\n");
 	rc = uart_start(&dev, true);
 	if (rc) {
 		printf("FAILED!\r\n");
