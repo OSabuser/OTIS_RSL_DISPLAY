@@ -140,6 +140,8 @@ int main(int argc, char *argv[])
 	
     while (1)
     {
+		
+		#if 0
         int x;	
 		
 		/* Ловим правильный первый байт*/
@@ -150,9 +152,10 @@ int main(int argc, char *argv[])
 		{
 			continue;   
 		}
-		
+		#endif
 		/* Чтение остальной части пакета */
-		int bytes_read = read(fd, uart_rx_buffer, 9);
+		int bytes_read = read(fd, &uart_rx_buffer, sizeof(uart_rx_buffer));
+		printf("RAW message: %s, %d bytes\n", uart_rx_buffer, bytes_read);
 		
 		/* Проверка корректности пакета*/
 		bool is_packet_valid = (bytes_read == 7 && (uart_rx_buffer[0]  == 'm' && uart_rx_buffer[1]  == 'F' && uart_rx_buffer[bytes_read - 1]  == 'E' && uart_rx_buffer[bytes_read]  == 'm'))? true : false;
@@ -161,7 +164,7 @@ int main(int argc, char *argv[])
 			static int floor_state[2], arrow_state[2];
 			
 			is_packet_valid = false;
-			printf("True message: %s, %d bytes\n", uart_rx_buffer, bytes_read);
+			printf("TRUE message: %s, %d bytes\n", uart_rx_buffer, bytes_read);
 			
 			int msb = uart_rx_buffer[FLOOR_H_POS] - '0', lsb = uart_rx_buffer[FLOOR_L_POS] - '0';
 			
