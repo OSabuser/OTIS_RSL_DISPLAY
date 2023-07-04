@@ -27,8 +27,14 @@
 //-------------------------------------------------------------------------
 
 #define NDEBUG
-
 #define RED(string) "\x1b[31m" string "\x1b[0m"
+
+
+enum {
+	FLOOR_H_POS = 2U,
+	FLOOR_L_POS = 3U,
+	ARROW_BIT_POS = 5U	
+};
 
 
 volatile bool run = true;
@@ -46,7 +52,16 @@ static void print_usage(void)
 
 
 	
-
+inline bool is_val_in_range(int x, int x0, int x1)
+{
+	if (x > x0 && x < x1)
+	{
+		return true;
+	}
+	
+	return false;
+	
+}
     
     
   
@@ -122,30 +137,44 @@ int main(int argc, char *argv[])
 	
 	
 	
+	
     while (1)
     {
         int x;	
 		
-		/*Receive first char */
-		while ((x = read(fd, uart_rx_buffer, 1)) != 1 ) 
-		{
+		/* Ловим правильный первый байт*/
+		while ((x = read(fd, uart_rx_buffer, 1)) != 1 ) {}
+	
 			
-		}
-		
 		if (uart_rx_buffer[0] != '!') 
 		{
 			continue;   
 		}
 		
-		/* Receive packet from MCU */
+		/* Чтение остальной части пакета */
 		int bytes_read = read(fd, uart_rx_buffer, 9);
 		
-		/* Check Validity*/
+		/* Проверка корректности пакета*/
 		bool is_packet_valid = (bytes_read == 7 && (uart_rx_buffer[0]  == 'm' && uart_rx_buffer[1]  == 'F' && uart_rx_buffer[bytes_read - 1]  == 'E' && uart_rx_buffer[bytes_read]  == 'm'))? true : false;
 		if(is_packet_valid)
 		{
+			static int floor_state[2], arrow_state[2];
+			
 			is_packet_valid = false;
 			printf("True message: %s, %d bytes\n", uart_rx_buffer, bytes_read);
+			
+			int msb = atoi(uart_rx_buffer[FLOOR_H_POS]), lsb = atoi(uart_rx_buffer[FLOOR_H_POS]);
+			
+			if(is_val_in_range(msb, 0, 10) && is_val_in_range(lsb, 0, 10))
+			{
+				floor_state[0] = msb * 10 + lsb;	
+				printf("True floor number: %d\n", floor_state[0]);				
+			}
+			
+			
+			
+			unsigned char floor_state[2]
+			
 		}
 		
 	
