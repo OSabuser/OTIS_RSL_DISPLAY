@@ -48,7 +48,11 @@ do
                 # Delete temp files
                 rm *.ts
                
-			   
+				echo "Dynamic image mode" 
+				
+                cd $EXEC_PATH
+				
+				
 				sleep 15
 			    # Umount USB drive 
 				umount $MOUNT_DIR
@@ -56,9 +60,7 @@ do
 				# Eject $DISK_NAME
 				udisksctl power-off -b $DISK_NAME
 				
-                echo "Dynamic image mode" 
-				
-                cd $EXEC_PATH
+                
                 #pkill rasp_otis
                 #omxplayer  --loop --no-osd video/output.mp4 &
                 #./rasp_otis -dynamic /dev/ttyAMA0  &

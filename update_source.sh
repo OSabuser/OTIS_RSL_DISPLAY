@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+
+git stash
+git stash clear
+
 set -e
 
 local_branch=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD)
