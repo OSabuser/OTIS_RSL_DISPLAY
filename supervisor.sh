@@ -48,6 +48,8 @@ do
                 # Delete temp files
                 rm *.ts
                
+			   
+				sleep 15
 			    # Umount USB drive 
 				umount $MOUNT_DIR
 				
