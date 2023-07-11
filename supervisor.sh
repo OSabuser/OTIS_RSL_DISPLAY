@@ -26,7 +26,9 @@ BWhite='\033[1;37m'       # White
 
 # Директория с исполняемой программой и видео
 EXEC_PATH=~/OTIS_RSL_DISPLAY/source
-SLEEP_TIME=5
+
+# Таймаут "опроса" о наличие смонтированной флешки
+SLEEP_TIME=10
 
 # Работаем, пока существует процесс основной программы (pgrep ret code == 0)
 while :
@@ -38,7 +40,7 @@ do
     then
 		# Имя диска:
 		DISK_NAME=$(ls /dev/sd* | head -n1)	
-		echo  -e "${BYellow} FOUND: $DISK_NAME ${White}"
+		echo  -e "${BGreen} ---------------->FOUND: $DISK_NAME ${White}"
 		
         # Точка монтирования флешки
         MOUNT_DIR=$(lsblk -o mountpoint | grep 'media')
@@ -47,7 +49,7 @@ do
         # Поиск видеороликов с именами [1-99].mp4 на флешке
         if ls [0-9][1-9].mp4
         then
-                echo -e "${BYellow} Found some videos! ${White}"
+                echo -e "${BGreen} ---------------->Found some videos! ${White}"
                 
                 # Если в выходной директории есть ролик, удаляем его
                 cd $EXEC_PATH
@@ -71,7 +73,7 @@ do
                 # Удаление временных файлов
                 rm *.ts
                
-				echo -e "${BYellow} Dynamic image mode ${White}" 
+				echo -e "${BGreen} ---------------->Dynamic image mode ${White}" 
 				
                 cd $EXEC_PATH
 				
@@ -89,20 +91,20 @@ do
 				# Restart supervisor script
                 #exec ./supervisor.sh
         else
-            echo -e "${BRed} Video files aren't present. Static image mode ${White}"    
+            echo -e "${BRed} ---------------->Video files aren't present. Static image mode ${White}"    
         fi    
            
     else 
-		echo -e "${BRed} There is no usb devices present! ${White}"
+		echo -e "${BRed} ---------------->There is no usb devices present! ${White}"
        
     fi
 	
 	# Таймаут $SLEEP_TIME секунд
-    echo -e "${BYellow} Sleep for $SLEEP_TIME seconds ${White}"
+    echo -e "${BGreen} ---------------->Sleep for $SLEEP_TIME seconds \r\n\n${White}"
     sleep $SLEEP_TIME
 	
 done
 
 # Попадаем сюда, если каким-то образом основной процесс был завершён
-echo  -e "${BRed} OH SHIT! FATAL ERROR! We need to reboot the system!"
+echo  -e "${BRed} ---------------->OH SHIT! FATAL ERROR! We need to reboot the system!"
 #reboot
