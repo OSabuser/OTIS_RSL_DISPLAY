@@ -1,6 +1,18 @@
 #!/usr/bin/env bash
 
 # Akimov D. 2023/11/07 @ MACH UNIT
+
+# Regular Colors
+Black='\033[0;30m'        # Black
+Red='\033[0;31m'          # Red
+Green='\033[0;32m'        # Green
+Yellow='\033[0;33m'       # Yellow
+Blue='\033[0;34m'         # Blue
+Purple='\033[0;35m'       # Purple
+Cyan='\033[0;36m'         # Cyan
+White='\033[0;37m'        # White
+
+
 # Bold
 BBlack='\033[1;30m'       # Black
 BRed='\033[1;31m'         # Red
@@ -19,14 +31,14 @@ SLEEP_TIME=5
 # Work until main process exists (pgrep ret code == 0)
 while :
 do
-	echo -e "${BYellow} Routine:  Check for mounted usb devices... ${BWhite}"
+	echo -e "${BYellow} Routine:  Check for mounted usb devices... ${White}"
 	
 	# Check if usb flash drive is present as block device
     if ls /dev/sd*
     then
 		# Get name of disk:
 		DISK_NAME=$(ls /dev/sd* | head -n1)	
-		echo  -e "${BYellow} FOUND: $DISK_NAME ${BWhite}"
+		echo  -e "${BYellow} FOUND: $DISK_NAME ${White}"
 		
         # Find usb drive mountpoint path and cd to it
         MOUNT_DIR=$(lsblk -o mountpoint | grep 'media')
@@ -35,7 +47,7 @@ do
         # Try to find video files with estimated names 01.mp4-99.mp4
         if ls [0-9][1-9].mp4
         then
-                echo -e "${BYellow} Found some videos! ${BWhite}"
+                echo -e "${BYellow} Found some videos! ${White}"
                 
                 # Check if output.mp4 already exists and delete if it is
                 cd $EXEC_PATH
@@ -58,7 +70,7 @@ do
                 # Delete temp files
                 rm *.ts
                
-				echo -e "${BYellow} Dynamic image mode ${BWhite}" 
+				echo -e "${BYellow} Dynamic image mode ${White}" 
 				
                 cd $EXEC_PATH
 				
@@ -77,16 +89,16 @@ do
 				# Restart supervisor script
                 #exec ./supervisor.sh
         else
-            echo -e "${BRed} Video files aren't present. Static image mode ${BWhite}"    
+            echo -e "${BRed} Video files aren't present. Static image mode ${White}"    
         fi    
            
     else 
-		echo -e "${BRed} There is no usb devices present! ${BWhite}"
+		echo -e "${BRed} There is no usb devices present! ${White}"
        
     fi
 	
 	# Sleep for TIMEOUT seconds
-    echo -e "${BYellow} Sleep for $SLEEP_TIME seconds ${BWhite}"
+    echo -e "${BYellow} Sleep for $SLEEP_TIME seconds ${White}"
     sleep $SLEEP_TIME
 	
 done
