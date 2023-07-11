@@ -19,14 +19,14 @@ SLEEP_TIME=5
 # Work until main process exists (pgrep ret code == 0)
 while :
 do
-	echo -e "${BYellow} Routine:  Check for mounted usb devices..."
+	echo -e "${BYellow} Routine:  Check for mounted usb devices... ${BWhite}"
 	
 	# Check if usb flash drive is present as block device
     if ls /dev/sd*
     then
 		# Get name of disk:
 		DISK_NAME=$(ls /dev/sd* | head -n1)	
-		echo  -e "${BYellow} FOUND: $DISK_NAME"
+		echo  -e "${BYellow} FOUND: $DISK_NAME ${BWhite}"
 		
         # Find usb drive mountpoint path and cd to it
         MOUNT_DIR=$(lsblk -o mountpoint | grep 'media')
@@ -35,7 +35,7 @@ do
         # Try to find video files with estimated names 01.mp4-99.mp4
         if ls [0-9][1-9].mp4
         then
-                echo -e "${BYellow} Found some videos!"
+                echo -e "${BYellow} Found some videos! ${BWhite}"
                 
                 # Check if output.mp4 already exists and delete if it is
                 cd $EXEC_PATH
@@ -58,7 +58,7 @@ do
                 # Delete temp files
                 rm *.ts
                
-				echo -e "${BYellow} Dynamic image mode" 
+				echo -e "${BYellow} Dynamic image mode ${BWhite}" 
 				
                 cd $EXEC_PATH
 				
@@ -77,16 +77,16 @@ do
 				# Restart supervisor script
                 #exec ./supervisor.sh
         else
-            echo -e "${BRed} Video files aren't present. Static image mode"    
+            echo -e "${BRed} Video files aren't present. Static image mode ${BWhite}"    
         fi    
            
     else 
-		echo -e "${BRed} There is no usb devices present!"
+		echo -e "${BRed} There is no usb devices present! ${BWhite}"
        
     fi
 	
 	# Sleep for TIMEOUT seconds
-    echo -e "${BYellow} Sleep for $SLEEP_TIME seconds"
+    echo -e "${BYellow} Sleep for $SLEEP_TIME seconds ${BWhite}"
     sleep $SLEEP_TIME
 	
 done
