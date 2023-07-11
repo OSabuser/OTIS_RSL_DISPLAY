@@ -31,7 +31,7 @@ EXEC_NAME=source
 SLEEP_TIME=10
 
 # Работаем, пока существует процесс основной программы (pgrep ret code == 0)
-while pgrep -x $EXEC_NAME > /dev/null:
+while pgrep -x $EXEC_NAME:
 do
 	echo -e "${BYellow} Routine:  Check for mounted usb devices... ${White}"
 	
@@ -106,5 +106,5 @@ do
 done
 
 # Попадаем сюда, если каким-то образом основной процесс был завершён
-echo  -e "${BRed} ---------------->OH SHIT! FATAL ERROR! We need to reboot the system!"
+echo  -e "${BRed} ---------------->OH SHIT! $EXEC_NAME doesn't exist! We need to reboot the system!"
 #reboot
