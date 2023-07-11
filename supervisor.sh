@@ -11,25 +11,16 @@ while :
 do
 	echo "Routine:  Check for mounted usb devices..."
 	
-	
 	# Check if usb flash drive is present as block device
     if ls /./dev/sd*
-    then
-        # Check if player is working
-        if pgrep -x omxplayer > /dev/null
-        then
-			pkill omxplayer
-            echo "Static image mode"
-			# Start STATIC MODE OF MAIN PROCESS
-			sleep $SLEEP_TIME
-        
+    then       
         # Find usb drive mountpoint path and cd to it
         MOUNT_DIR=$(lsblk -o mountpoint | grep 'media')
         cd $MOUNT_DIR
             
         # Try to find video files with estimated names 01.mp4-99.mp4
         if ls [0-9][1-9].mp4
-            then
+        then
                 echo "Found some videos!"
                 
                 # Check if output.mp4 already exists and delete if it is
@@ -61,22 +52,19 @@ do
                 #./rasp_otis -dynamic /dev/ttyAMA0  &
 				# Restart supervisor script
                 #exec ./supervisor.sh
-            else
-                echo "Video files aren't present. Static image mode"    
-            fi
+        else
+            echo "Video files aren't present. Static image mode"    
+        fi    
            
     else 
 		echo "There is no usb devices present!"
-        if pgrep -x omxplayer > /dev/null
-        then
-            echo "Static image mode"
-        fi
-        
+       
     fi
 	
 	# Sleep for TIMEOUT seconds
     echo "Sleep for $SLEEP_TIME seconds"
     sleep $SLEEP_TIME
+	
 done
 
 
