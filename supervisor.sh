@@ -24,41 +24,42 @@ BCyan='\033[1;36m'        # Cyan
 BWhite='\033[1;37m'       # White
 
 
-# Path to executables
+# Директория с исполняемой программой и видео
 EXEC_PATH=~/OTIS_RSL_DISPLAY/source
 SLEEP_TIME=5
 
-# Work until main process exists (pgrep ret code == 0)
+# Работаем, пока существует процесс основной программы (pgrep ret code == 0)
 while :
 do
 	echo -e "${BYellow} Routine:  Check for mounted usb devices... ${White}"
 	
-	# Check if usb flash drive is present as block device
+	# Проверка наличия блочных устройств (по умолчанию есть только mmcblk, на котором расположены ОС и ФС
     if ls /dev/sd*
     then
-		# Get name of disk:
+		# Имя диска:
 		DISK_NAME=$(ls /dev/sd* | head -n1)	
 		echo  -e "${BYellow} FOUND: $DISK_NAME ${White}"
 		
-        # Find usb drive mountpoint path and cd to it
+        # Точка монтирования флешки
         MOUNT_DIR=$(lsblk -o mountpoint | grep 'media')
         cd $MOUNT_DIR
             
-        # Try to find video files with estimated names 01.mp4-99.mp4
+        # Поиск видеороликов с именами [1-99].mp4 на флешке
         if ls [0-9][1-9].mp4
         then
                 echo -e "${BYellow} Found some videos! ${White}"
                 
-                # Check if output.mp4 already exists and delete if it is
+                # Если в выходной директории есть ролик, удаляем его
                 cd $EXEC_PATH
                 [ -e videos/output.mp4 ] && rm videos/output.mp4
                 
-                # Merge videos into one file
+                
                 cd $MOUNT_DIR
                 
-                 # Delete temp files
+                # Удаление временных файлов
                 rm *.ts
                 
+				# Склейка видео в один файл
                 for video in [0-9][1-9].mp4; do
                     ffmpeg -i $video -c copy -bsf:v h264_mp4toannexb -f mpegts $video.ts
                 done
@@ -67,7 +68,7 @@ do
 		
                 ffmpeg -i "concat:$CONCAT" -c copy -bsf:a aac_adtstoasc ~/OTIS_RSL_DISPLAY/source/videos/output.mp4
 
-                # Delete temp files
+                # Удаление временных файлов
                 rm *.ts
                
 				echo -e "${BYellow} Dynamic image mode ${White}" 
@@ -75,11 +76,10 @@ do
                 cd $EXEC_PATH
 				
 				
-				sleep 15
-			    # Umount USB drive 
+			    # Размонтирование флешки
 				umount $MOUNT_DIR
 				
-				# Eject $DISK_NAME
+				# Извлечение флешки
 				udisksctl power-off -b $DISK_NAME
 				
                 
@@ -97,12 +97,12 @@ do
        
     fi
 	
-	# Sleep for TIMEOUT seconds
+	# Таймаут $SLEEP_TIME секунд
     echo -e "${BYellow} Sleep for $SLEEP_TIME seconds ${White}"
     sleep $SLEEP_TIME
 	
 done
 
-
+# Попадаем сюда, если каким-то образом основной процесс был завершён
 echo  -e "${BRed} OH SHIT! FATAL ERROR! We need to reboot the system!"
 #reboot
