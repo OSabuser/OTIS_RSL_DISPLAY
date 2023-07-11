@@ -12,8 +12,12 @@ do
 	echo "Routine:  Check for mounted usb devices..."
 	
 	# Check if usb flash drive is present as block device
-    if ls /./dev/sd*
-    then       
+    if ls /dev/sd*
+    then
+		# Get name of disk:
+		DISK_NAME = $(ls /dev/sd* | head -n1)	
+		echo "FOUND: $DISK_NAME"
+		
         # Find usb drive mountpoint path and cd to it
         MOUNT_DIR=$(lsblk -o mountpoint | grep 'media')
         cd $MOUNT_DIR
@@ -44,6 +48,12 @@ do
                 # Delete temp files
                 rm *.ts
                
+			    # Umount USB drive 
+				umount $MOUNT_DIR
+				
+				# Eject $DISK_NAME
+				udisksctl power-off -b $DISK_NAME
+				
                 echo "Dynamic image mode" 
 				
                 cd $EXEC_PATH
