@@ -26,12 +26,12 @@ BWhite='\033[1;37m'       # White
 
 # Директория с исполняемой программой и видео
 EXEC_PATH=~/OTIS_RSL_DISPLAY/source
-
+EXEC_NAME=source
 # Таймаут "опроса" о наличие смонтированной флешки
 SLEEP_TIME=10
 
 # Работаем, пока существует процесс основной программы (pgrep ret code == 0)
-while :
+while pgrep -x $EXEC_NAME > /dev/null:
 do
 	echo -e "${BYellow} Routine:  Check for mounted usb devices... ${White}"
 	
@@ -84,10 +84,10 @@ do
 				# Извлечение флешки
 				udisksctl power-off -b $DISK_NAME
 				
-                
-                #pkill rasp_otis
+                # P
+                pkill $EXEC_NAME
                 #omxplayer  --loop --no-osd video/output.mp4 &
-                #./rasp_otis -dynamic /dev/ttyAMA0  &
+                ./$EXEC_NAME -dynamic &
 				# Restart supervisor script
                 #exec ./supervisor.sh
         else
