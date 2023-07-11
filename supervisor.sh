@@ -7,11 +7,6 @@ EXEC_PATH=~/OTIS_RSL_DISPLAY/source
 SLEEP_TIME=5
 
 # Work until main process exists (pgrep ret code == 0)
-#while  pgrep -x source > /dev/null
-
-
-
-
 while :
 do
 	echo "Routine:  Check for mounted usb devices..."
@@ -23,10 +18,10 @@ do
         # Check if player is working
         if pgrep -x omxplayer > /dev/null
         then
-			 pkill omxplayer
-             echo "Static image mode"
-			 # Start STATIC MODE OF MAIN PROCESS
-			 sleep $SLEEP_TIME
+			pkill omxplayer
+            echo "Static image mode"
+			# Start STATIC MODE OF MAIN PROCESS
+			sleep $SLEEP_TIME
         
         # Find usb drive mountpoint path and cd to it
         MOUNT_DIR=$(lsblk -o mountpoint | grep 'media')
@@ -75,16 +70,9 @@ do
         if pgrep -x omxplayer > /dev/null
         then
             echo "Static image mode"
-            #cd $EXEC_PATH
-            #pkill omxplayer
-            #pkill rasp_otis
-            #./rasp_otis -static  /dev/ttyAMA0 &
-			# Restart supervisor script
-            #exec ./supervisor.sh
         fi
         
     fi
-	
 	
 	# Sleep for TIMEOUT seconds
     echo "Sleep for $SLEEP_TIME seconds"
