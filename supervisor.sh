@@ -15,7 +15,7 @@ do
     if ls /dev/sd*
     then
 		# Get name of disk:
-		DISK_NAME = $(ls /dev/sd* | head -n1)	
+		DISK_NAME=$(ls /dev/sd* | head -n1)	
 		echo "FOUND: $DISK_NAME"
 		
         # Find usb drive mountpoint path and cd to it
