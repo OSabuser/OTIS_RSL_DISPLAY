@@ -1,4 +1,4 @@
-ю#!/usr/bin/env bash
+#!/usr/bin/env bash
 
 # Akimov D. 2023/11/07 @ MACH UNIT
 
@@ -30,12 +30,13 @@ EXEC_NAME=source
 # Таймаут "опроса" о наличие смонтированной флешки
 SLEEP_TIME=10
 
+trap '[ -z $! ] || kill $!' SIGHUP SIGINT SIGQUIT SIGTERM
 ./$OTIS_RSL_DISPLAY/source/source -dynamic &
-sleep $SLEEP_TIME
+sleep 5
 
 
 # Работаем, пока существует процесс основной программы (pgrep ret code == 0)
-while pgrep -x $EXEC_NAME > /dev/null:
+while [ -e /proc/$! ]:
 do
 	echo -e "${BYellow} Routine:  Check for mounted usb devices... ${White}"
 	
