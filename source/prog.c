@@ -133,7 +133,7 @@ int main(int argc, char *argv[])
     image_object_t   arrow = 
     {
         .background = 0x00, 
-        .layer = 2, 
+        .layer = 3, 
         .display_number = 0, 
         .pos_X = 625, 
         .pos_Y = 450
@@ -192,7 +192,7 @@ int main(int argc, char *argv[])
     
     createResourceImageLayer(&right_digit_layer, right_digit.layer);
     createResourceImageLayer(&left_digit_layer, left_digit.layer);
-    createResourceImageLayer(&arrow_layer, arrow.layer);
+    //createResourceImageLayer(&arrow_layer, arrow.layer);
 
  
 
@@ -326,7 +326,7 @@ int main(int argc, char *argv[])
 			}
 			
 			/*Обновление спрайтов номера этажа*/
-			if(floor_state[0] != floor_state[1])
+			if(floor_state[0] != floor_state[1] && 0)
 			{
 				char pic_name[40];
 					
