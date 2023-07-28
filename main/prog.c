@@ -97,7 +97,7 @@ static void update_picture_on_layer(IMAGE_LAYER_T *layer, const char *path_to_im
  
 int main(int argc, char *argv[])
 {
-    bcm_host_init();
+   
 	
 	
 	/*DispmanX structure wrappers*/
@@ -165,10 +165,13 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 	
+	
+	bcm_host_init();
+	
 	/* Загрузка стартовых спрайтов*/
-    update_picture_on_layer(&left_digit_layer, "./images/1.png");
-    update_picture_on_layer(&right_digit_layer, "./images/2.png");
-    update_picture_on_layer(&arrow_layer, "./images/3.png");
+    update_picture_on_layer(&left_digit_layer, "./resources/1.png");
+    update_picture_on_layer(&right_digit_layer, "./resources/2.png");
+    update_picture_on_layer(&arrow_layer, "./resources/3.png");
 	
 	
 	int result = 0;
@@ -199,7 +202,7 @@ int main(int argc, char *argv[])
 	
 	if(is_static_mode)
 	{
-		 update_picture_on_layer(&background_layer, "~/OTIS_RSL_DISPLAY/source/images/BACK.png");
+		 update_picture_on_layer(&background_layer, "./resources/BACK.png");
 		
 		createResourceImageLayer(&background_layer, background.layer);
 		addElementImageLayerOffset(&background_layer,
