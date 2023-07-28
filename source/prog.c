@@ -169,9 +169,9 @@ int main(int argc, char *argv[])
 	bcm_host_init();
 	
 	/* Загрузка стартовых спрайтов*/
-    update_picture_on_layer(&left_digit_layer, "./resources/1.png");
-    update_picture_on_layer(&right_digit_layer, "./resources/2.png");
-    update_picture_on_layer(&arrow_layer, "./resources/3.png");
+    update_picture_on_layer(&left_digit_layer, "./resources/0.png");
+    update_picture_on_layer(&right_digit_layer, "./resources/0.png");
+    update_picture_on_layer(&arrow_layer, "./resources/ARROW_UP.png");
 	
 	
 	int result = 0;
