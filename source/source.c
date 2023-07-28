@@ -27,6 +27,7 @@
 //-------------------------------------------------------------------------
 
 #define NDEBUG
+//#define DEBUG //Вывод отладочных сообщений в консоль
 #define RED(string) "\x1b[31m" string "\x1b[0m"
 
 
@@ -71,8 +72,56 @@ inline bool is_val_in_range(int x, int x0, int x1)
 int main(int argc, char *argv[])
 {
     bcm_host_init();
+	
+	
+	/*DispmanX structure wrappers*/
+    IMAGE_LAYER_T background_layer, right_digit_layer, arrow_layer, left_digit_layer;
 
-	/* Get command line arguments */
+    /*Create init image objects*/
+    ImageObject_t   background = 
+    {   
+        .background = 0x00, 
+        .layer = 1, 
+        .display_number = 0, 
+        .pos_X = 0, 
+        .pos_Y = 0,
+		.image_path = "./images/BACK.png"
+    };
+    
+    ImageObject_t   right_digit = 
+    {
+        .background = 0x00, 
+        .layer = 2, 
+        .display_number = 0, 
+        .pos_X = 774, 
+        .pos_Y = 112, 
+        .image_path = "./images/4.png"
+    };
+    ImageObject_t   left_digit = 
+    {
+        .background = 0x00, 
+        .layer = 4, 
+        .display_number = 0, 
+        .pos_X = 600, 
+        .pos_Y = 112, 
+        .image_path = "./images/1.png"
+    };
+    
+    
+    ImageObject_t   arrow = 
+    {
+        .background = 0x00, 
+        .layer = 3, 
+        .display_number = 0, 
+        .pos_X = 625, 
+        .pos_Y = 450, 
+        .image_path = "./images/ARROW_DOWN.png"
+    };
+	
+	
+	
+
+	/* Получение аргументов командной строки */
 	program = basename(argv[0]);
 	work_mode = argv[1];
 	
@@ -85,6 +134,11 @@ int main(int argc, char *argv[])
     if(strcmp(work_mode, "-static") == 0)
     {
         printf("Static mode\n");
+		if (loadPng(&(background_layer.image), background.image_path) == false)
+		{
+			fprintf(stderr, RED("unable to load %s\n"), background.image_path);
+			exit(EXIT_FAILURE);
+		}
         
     }
     else if (strcmp(work_mode, "-dynamic") == 0)
@@ -96,6 +150,96 @@ int main(int argc, char *argv[])
         print_usage();
         exit(EXIT_FAILURE);
     }
+	
+	
+	if (loadPng(&(right_digit_layer.image), right_digit.image_path) == false)
+    {
+        fprintf(stderr, RED("unable to load %s\n"), right_digit.image_path);
+        exit(EXIT_FAILURE);
+    }
+  
+    if (loadPng(&(arrow_layer.image), arrow.image_path) == false)
+    {
+        fprintf(stderr, RED("unable to load %s\n"), arrow.image_path);
+        exit(EXIT_FAILURE);
+    }
+    
+    if (loadPng(&(left_digit_layer.image), left_digit.image_path) == false)
+    {
+        fprintf(stderr, RED("unable to load %s\n"), left_digit.image_path);
+        exit(EXIT_FAILURE);
+    }
+	
+	
+	int result = 0;
+
+    DISPMANX_DISPLAY_HANDLE_T display_1;
+
+    result = vc_dispmanx_display_close(display_1);
+    assert(result == 0);
+    
+    display_1 = vc_dispmanx_display_open(background.display_number);
+    assert(display_1 != 0);
+    
+
+    DISPMANX_MODEINFO_T info;
+    result = vc_dispmanx_display_get_info(display_1, &info);
+    assert(result == 0);
+
+    
+    createResourceImageLayer(&background_layer, background.layer);
+    createResourceImageLayer(&right_digit_layer, right_digit.layer);
+    createResourceImageLayer(&left_digit_layer, left_digit.layer);
+    createResourceImageLayer(&arrow_layer, arrow.layer);
+
+ 
+
+    DISPMANX_UPDATE_HANDLE_T update = vc_dispmanx_update_start(0);
+    assert(update != 0);
+
+       
+    addElementImageLayerOffset(&background_layer,
+                               background.pos_X,
+                               background.pos_Y,
+                               display_1,
+                               update);
+    
+    addElementImageLayerOffset(&right_digit_layer,
+                               right_digit.pos_X,
+                               right_digit.pos_Y,
+                               display_1,
+                               update);
+     addElementImageLayerOffset(&left_digit_layer,
+                               left_digit.pos_X,
+                               left_digit.pos_Y,
+                               display_1,
+                               update);
+    addElementImageLayerOffset(&arrow_layer,
+                               arrow.pos_X,
+                               arrow.pos_Y,
+                               display_1,
+                               update);
+    result = vc_dispmanx_update_submit_sync(update);
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
    /*mini UART, TX-14, RX-15 */
 	struct termios serial;
