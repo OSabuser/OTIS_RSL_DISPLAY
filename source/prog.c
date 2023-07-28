@@ -352,6 +352,7 @@ int main(int argc, char *argv[])
 					if(refresh_MSB)
 					{
 						destroyImageLayer(&left_digit_layer);
+						update_picture_on_layer(&arrow_layer, "./resources/BLANK_SYMBOL.png");
 					}
 					
 					sprintf(pic_name, "./resources/%d.png", floor_state[0] % 10);
