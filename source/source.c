@@ -153,8 +153,10 @@ int main(int argc, char *argv[])
 		
 		/* Чтение остальной части пакета */
 		int bytes_read = read(fd, uart_rx_buffer, 9 - 1);
-		uart_rx_buffer[bytes_read] = '\0'; 
+		uart_rx_buffer[bytes_read] = '\0';
+#ifndef NDEBUG		
 		printf("Raw message: %s, %d bytes\n", uart_rx_buffer, bytes_read);
+#endif
 		
 		/* Проверка корректности пакета*/
 		bool is_packet_valid = (bytes_read == 7 && (uart_rx_buffer[0]  == 'm' && uart_rx_buffer[1]  == 'F' && uart_rx_buffer[bytes_read - 1]))? true : false;
@@ -164,14 +166,16 @@ int main(int argc, char *argv[])
 			static int floor_state[2], arrow_state[2];
 			
 			is_packet_valid = false;
+#ifndef NDEBUG	
 			printf("True message: %s, %d bytes\n", uart_rx_buffer, bytes_read);
+#endif
 			
 			int msb = uart_rx_buffer[FLOOR_H_POS] - '0', lsb = uart_rx_buffer[FLOOR_L_POS] - '0';
 			int arrow_bits = uart_rx_buffer[ARROW_BIT_POS] - '0';
 			
 			if(is_val_in_range(msb, 0, 10) && is_val_in_range(lsb, -1, 10))
 			{
-				floor_state[0] = msb * 10 + lsb;	
+				floor_state[0] = msb * 10 + lsb;			
 				printf("True floor number: %d\n", floor_state[0]);				
 			}
 			
