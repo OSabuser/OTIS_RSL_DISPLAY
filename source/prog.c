@@ -373,15 +373,20 @@ int main(int argc, char *argv[])
 							destroyImageLayer(&left_digit_layer);
 						}
 						sprintf(pic_name, "./resources/%d.png", floor_state[0] / 10);
-						update_picture_on_layer(&left_digit_layer, pic_name);
+						printf("Pic_name: %s",pic_name);
+						
+						
 						createResourceImageLayer(&left_digit_layer, left_digit.layer);
+						update_picture_on_layer(&left_digit_layer, pic_name);
 					}
 
 					sprintf(pic_name, "./resources/%d.png", floor_state[0] % 10);
-					printf("Pic_name: %s, DIGIT: %d",pic_name);
-					update_picture_on_layer(&right_digit_layer, pic_name);
+					printf("Pic_name: %s",pic_name);
+					
+					
+					
 					createResourceImageLayer(&right_digit_layer, right_digit.layer);
-
+					update_picture_on_layer(&right_digit_layer, pic_name);
 
 
 					addElementImageLayerOffset(&right_digit_layer,
