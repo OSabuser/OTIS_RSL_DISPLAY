@@ -171,7 +171,7 @@ int main(int argc, char *argv[])
 	/* Загрузка стартовых спрайтов*/
     update_picture_on_layer(&left_digit_layer, "./resources/0.png");
     update_picture_on_layer(&right_digit_layer, "./resources/0.png");
-    update_picture_on_layer(&arrow_layer, "./resources/ARROW_UP.png");
+    update_picture_on_layer(&arrow_layer, "./resources/BLANK_ARROW.png");
 	
 	
 	int result = 0;
@@ -389,19 +389,24 @@ int main(int argc, char *argv[])
 				is_refresh_needed = true;
 				char pic_name[40];
 				destroyImageLayer(&arrow_layer);
-	#if 0			
+				BLANK_ARROW
 				switch(arrow_state[0)
 				{
 					case 1: // Вверх
-						update_picture_on_layer(&arrow_layer, "./resources/ARROW_UP.png");						
+						update_picture_on_layer(&arrow_layer, "./resources/ARROW_UP.png");	
 					break;
 					case 2: // Вниз
-						update_picture_on_layer(&arrow_layer, "./resources/ARROW_DOWN.png");	
+						update_picture_on_layer(&arrow_layer, "./resources/ARROW_DOWN.png");					
+					break;
+					default:
+						update_picture_on_layer(&arrow_layer, "./resources/BLANK_ARROW.png");
 					break;
 					
 				}
-	#endif
+				
 				createResourceImageLayer(&arrow_layer, arrow.layer);
+	
+				
 			}//if(arrow_state[0] != arrow_state[1])
 			
 			floor_state[1] = floor_state[0];
