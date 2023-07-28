@@ -296,7 +296,7 @@ int main(int argc, char *argv[])
 #endif
 		
 		/* Проверка корректности пакета*/
-		bool is_packet_valid = (bytes_read == 7 && (uart_rx_buffer[0]  == 'm' && uart_rx_buffer[1]  == 'F' && uart_rx_buffer[bytes_read - 1]))? true : false;
+		bool is_packet_valid = (bytes_read == 7 && (uart_rx_buffer[0]  == 'm' && uart_rx_buffer[1]  == 'F'))? true : false;
 		
 		if(is_packet_valid)
 		{
@@ -365,13 +365,11 @@ int main(int argc, char *argv[])
 
 					if(refresh_MSB)
 					{
-						//if(floor_state[1] > 9)
+						if(floor_state[1] > 9)
 						{
 							destroyImageLayer(&left_digit_layer);
 						}
-						sprintf(pic_name, "./resources/%d.png", floor_state[0] / 10);
-						printf("Pic_name: %s",pic_name);
-						
+						sprintf(pic_name, "./resources/%d.png", floor_state[0] / 10);				
 						update_picture_on_layer(&left_digit_layer, pic_name);
 						createResourceImageLayer(&left_digit_layer, left_digit.layer);
 					}
@@ -390,8 +388,20 @@ int main(int argc, char *argv[])
 			{
 				is_refresh_needed = true;
 				char pic_name[40];
-				//destroyImageLayer(&arrow_layer);
-				
+				destroyImageLayer(&arrow_layer);
+	#if 0			
+				switch(arrow_state[0)
+				{
+					case 1: // Вверх
+						update_picture_on_layer(&arrow_layer, "./resources/ARROW_UP.png");						
+					break;
+					case 2: // Вниз
+						update_picture_on_layer(&arrow_layer, "./resources/ARROW_DOWN.png");	
+					break;
+					
+				}
+	#endif
+				createResourceImageLayer(&arrow_layer, arrow.layer);
 			}//if(arrow_state[0] != arrow_state[1])
 			
 			floor_state[1] = floor_state[0];
@@ -399,26 +409,27 @@ int main(int argc, char *argv[])
 		
 		}
 		
-		
+		/* Обновление экрана */
 		if(is_refresh_needed)
 		{
 			is_refresh_needed = false;
 			update = vc_dispmanx_update_start(0);
 		
-			addElementImageLayerOffset(&right_digit_layer,
-									right_digit.pos_X,
-									right_digit.pos_Y,
+			addElementImageLayerOffset(&left_digit_layer,
+									left_digit.pos_X,
+									left_digit.pos_Y,
 									display_1,
-									update);		
+									update);
+									
 			addElementImageLayerOffset(&right_digit_layer,
                                 right_digit.pos_X,
                                 right_digit.pos_Y,
                                 display_1,
                                 update); 
 					
-			addElementImageLayerOffset(&left_digit_layer,
-                                left_digit.pos_X,
-                                left_digit.pos_Y,
+			addElementImageLayerOffset(&arrow_layer,
+                                arrow.pos_X,
+                                arrow.pos_Y,
                                 display_1,
                                 update);
 								
