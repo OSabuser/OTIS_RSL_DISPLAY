@@ -399,7 +399,7 @@ int main(int argc, char *argv[])
 								
 					result = vc_dispmanx_update_submit_sync(update); //Update images
 					
-				}if(floor_state[0] < 10)
+				}//if(floor_state[0] < 10)
 				
 			}//if(floor_state[0] != floor_state[1])
 			
