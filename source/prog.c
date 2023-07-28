@@ -389,7 +389,7 @@ int main(int argc, char *argv[])
 				is_refresh_needed = true;
 				char pic_name[40];
 				destroyImageLayer(&arrow_layer);
-				BLANK_ARROW
+			
 				switch(arrow_state[0)
 				{
 					case 1: // Вверх
