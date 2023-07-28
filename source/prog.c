@@ -125,7 +125,7 @@ int main(int argc, char *argv[])
     image_object_t   left_digit = 
     {
         .background = 0x00, 
-        .layer = 3, 
+        .layer = 2, 
         .display_number = 0, 
         .pos_X = 600, 
         .pos_Y = 112
@@ -133,7 +133,7 @@ int main(int argc, char *argv[])
     image_object_t   arrow = 
     {
         .background = 0x00, 
-        .layer = 4, 
+        .layer = 2, 
         .display_number = 0, 
         .pos_X = 625, 
         .pos_Y = 450
@@ -169,9 +169,9 @@ int main(int argc, char *argv[])
 	bcm_host_init();
 	
 	/* Загрузка стартовых спрайтов*/
-    update_picture_on_layer(&left_digit_layer, "./resources/1.png");
-    update_picture_on_layer(&right_digit_layer, "./resources/2.png");
-    update_picture_on_layer(&arrow_layer, "./resources/3.png");
+    update_picture_on_layer(&left_digit_layer, "./resources/0.png");
+    update_picture_on_layer(&right_digit_layer, "./resources/0.png");
+    //update_picture_on_layer(&arrow_layer, "./resources/ARROW_UP.png");
 	
 	
 	int result = 0;
@@ -223,33 +223,17 @@ int main(int argc, char *argv[])
                                left_digit.pos_Y,
                                display_1,
                                update);
-    addElementImageLayerOffset(&arrow_layer,
+    /*
+	addElementImageLayerOffset(&arrow_layer,
                                arrow.pos_X,
                                arrow.pos_Y,
                                display_1,
                                update);
+	*/
     result = vc_dispmanx_update_submit_sync(update);
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
    /*mini UART, TX-14, RX-15 */
 	struct termios serial;
     char uart_rx_buffer[10];
@@ -287,6 +271,7 @@ int main(int argc, char *argv[])
 	}
     
 
+	bool refresh_MSB = false;
 	
     while (1)
     {
@@ -328,15 +313,86 @@ int main(int argc, char *argv[])
 			
 			if(is_val_in_range(msb, 0, 10) && is_val_in_range(lsb, -1, 10))
 			{
+				/*Обновление номера этажа*/
 				floor_state[0] = msb * 10 + lsb;			
 				printf("True floor number: %d\n", floor_state[0]);				
 			}
 			
 			if(is_val_in_range(arrow_bits, -1, 4))
 			{
+				/*Обновление направления движения*/
 				arrow_state[0] = arrow_bits; 
 				printf("True arrow value: %d\n", arrow_state[0]);	
 			}
+			
+			/*Обновление спрайтов номера этажа*/
+			if(floor_state[0] != floor_state[1])
+			{
+				/* Перерисовывать старший разряд?*/
+				if((floor_state[0] > 9 && floor_state[1] < 10) || (floor_state[0] < 10 && floor_state[1] > 9))
+				{
+					refresh_MSB = true;
+				}
+				else if((floor_state[0] > 19 && floor_state[1] < 20) || (floor_state[0] < 20 && floor_state[1] > 19))
+				{
+					refresh_MSB = true;
+				}
+				else
+				{
+					refresh_MSB = false;
+				}
+				
+				if(floor_state[0] < 10)
+				{
+					char pic_name[40];
+					
+					destroyImageLayer(&right_digit_layer);
+
+					if(refresh_MSB)
+					{
+						destroyImageLayer(&left_digit_layer);
+					}
+					
+					sprintf(pic_name, "./resources/%d.png", floor_state[0] % 10);
+					update_picture_on_layer(&right_digit_layer, pic_name);
+					createResourceImageLayer(&right_digit_layer, right_digit.layer);
+					addElementImageLayerOffset(&right_digit_layer,
+									right_digit.pos_X,
+									right_digit.pos_Y,
+									display_1,
+									update);
+				}
+					else 
+					{
+					destroyImageLayer(&right_digit_layer);
+
+					if(refresh_MSB)
+					{
+						if(floor_state[1] > 9)
+						{
+							destroyImageLayer(&left_digit_layer);
+						}
+						sprintf(pic_name, "./resources/%d.png", floor_state[0] / 10);
+						update_picture_on_layer(&left_digit_layer, pic_name);
+						createResourceImageLayer(&left_digit_layer, right_digit.layer);
+					}
+
+					sprintf(pic_name, "./resources/%d.png", floor_state[0] % 10);
+					update_picture_on_layer(&right_digit_layer, pic_name);
+					createResourceImageLayer(&right_digit_layer, right_digit.layer);
+					
+				}//if(floor_cnt > 9)
+				
+			}//if(floor_state[0] != floor_state[1])
+			
+		
+			/*Обновление спрайта направления движения*/
+			if(arrow_state[0] != arrow_state[1])
+			{
+				char pic_name[40];
+				
+				
+			}//if(arrow_state[0] != arrow_state[1])
 			
 			floor_state[1] = floor_state[0];
 			arrow_state[1] = arrow_state[0];		
@@ -345,8 +401,17 @@ int main(int argc, char *argv[])
 	
        
     }
+	
+	//WHAT THE FUCK ?!!!!!//
+    destroyImageLayer(&left_digit_layer);
+    destroyImageLayer(&background_layer);
+    destroyImageLayer(&right_digit_layer);
+    destroyImageLayer(&arrow_layer);
+
+    result = vc_dispmanx_display_close(display_1);
+    assert(result == 0);
 
 
-
-    return 0;
+    fprintf(stderr, RED("UNINTENDED ERROR! \n"));	
+    exit(EXIT_FAILURE);
 }
