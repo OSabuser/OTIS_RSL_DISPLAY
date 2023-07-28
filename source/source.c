@@ -44,7 +44,6 @@ typedef struct
     uint32_t display_number;
     int32_t pos_X;
     int32_t pos_Y;
-    const char *image_path;
 }image_object_t;
 
 
@@ -75,7 +74,23 @@ inline bool is_val_in_range(int x, int x0, int x1)
 	
 }
     
+static void update_picture_on_layer(IMAGE_LAYER_T *layer, const char *path_to_image)
+{
+    if(layer != NULL && path_to_image != NULL)
+    {
+        if (loadPng(&(layer->image), path_to_image) == false)
+        {
+            /*Ошибка декодирования! */
+			fprintf(stderr, RED("unable to load %s\n"), path_to_image);
+			exit(EXIT_FAILURE);
+        }
+    }
+    else if (path_to_image == NULL)
+    {
+        /*Удаляем изображение*/
+    }
     
+}    
   
  
  
@@ -97,43 +112,33 @@ int main(int argc, char *argv[])
         .layer = 1, 
         .display_number = 0, 
         .pos_X = 0, 
-        .pos_Y = 0,
-		.image_path = "/images/BACK.png"
-    };
-    
+        .pos_Y = 0
+    };  
     image_object_t   right_digit = 
     {
         .background = 0x00, 
         .layer = 2, 
         .display_number = 0, 
         .pos_X = 774, 
-        .pos_Y = 112, 
-        .image_path = "/images/4.png"
+        .pos_Y = 112
     };
     image_object_t   left_digit = 
     {
         .background = 0x00, 
-        .layer = 4, 
+        .layer = 3, 
         .display_number = 0, 
         .pos_X = 600, 
-        .pos_Y = 112, 
-        .image_path = "/images/1.png"
-    };
-    
-    
+        .pos_Y = 112
+    };  
     image_object_t   arrow = 
     {
         .background = 0x00, 
-        .layer = 3, 
+        .layer = 4, 
         .display_number = 0, 
         .pos_X = 625, 
-        .pos_Y = 450, 
-        .image_path = "/images/ARROW_DOWN.png"
+        .pos_Y = 450
     };
 	
-	
-	
-
 	/* Получение аргументов командной строки */
 	program = basename(argv[0]);
 	work_mode = argv[1];
@@ -160,24 +165,11 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 	
-	
-	if (loadPng(&(right_digit_layer.image), right_digit.image_path) == false)
-    {
-        fprintf(stderr, RED("unable to load %s\n"), right_digit.image_path);
-        exit(EXIT_FAILURE);
-    }
-  
-    if (loadPng(&(arrow_layer.image), arrow.image_path) == false)
-    {
-        fprintf(stderr, RED("unable to load %s\n"), arrow.image_path);
-        exit(EXIT_FAILURE);
-    }
-    
-    if (loadPng(&(left_digit_layer.image), left_digit.image_path) == false)
-    {
-        fprintf(stderr, RED("unable to load %s\n"), left_digit.image_path);
-        exit(EXIT_FAILURE);
-    }
+lll
+	/* Загрузка стартовых спрайтов*/
+    update_picture_on_layer(&left_digit_layer, "./images/1.png");
+    update_picture_on_layer(&right_digit_layer, "./images/2.png");
+    update_picture_on_layer(&arrow_layer, "./images/3.png");
 	
 	
 	int result = 0;
@@ -208,11 +200,7 @@ int main(int argc, char *argv[])
 	
 	if(is_static_mode)
 	{
-		if (loadPng(&(background_layer.image), background.image_path) == false)
-		{
-			fprintf(stderr, RED("unable to load %s\n"), background.image_path);
-			exit(EXIT_FAILURE);
-		}
+		 update_picture_on_layer(&background_layer, "./images/BACK.png");
 		
 		createResourceImageLayer(&background_layer, background.layer);
 		addElementImageLayerOffset(&background_layer,
