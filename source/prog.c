@@ -287,6 +287,8 @@ int main(int argc, char *argv[])
 	}
     
 
+	bool refresh_MSB = false;
+	
 	
     while (1)
     {
@@ -337,6 +339,76 @@ int main(int argc, char *argv[])
 				arrow_state[0] = arrow_bits; 
 				printf("True arrow value: %d\n", arrow_state[0]);	
 			}
+			
+			/*Обновление спрайтов номера этажа*/
+			if(floor_state[0] != floor_state[1] && 0)
+			{
+				char pic_name[40];
+					
+				/* Перерисовывать старший разряд?*/
+				if((floor_state[0] > 9 && floor_state[1] < 10) || (floor_state[0] < 10 && floor_state[1] > 9))
+				{
+					refresh_MSB = true;
+				}
+				else if((floor_state[0] > 19 && floor_state[1] < 20) || (floor_state[0] < 20 && floor_state[1] > 19))
+				{
+					refresh_MSB = true;
+				}
+				else
+				{
+					refresh_MSB = false;
+				}
+				
+				if(floor_state[0] < 10)
+				{
+					
+					destroyImageLayer(&right_digit_layer);
+
+					if(refresh_MSB)
+					{
+						destroyImageLayer(&left_digit_layer);
+					}
+					
+					sprintf(pic_name, "./resources/%d.png", floor_state[0] % 10);
+					update_picture_on_layer(&right_digit_layer, pic_name);
+					createResourceImageLayer(&right_digit_layer, right_digit.layer);
+					addElementImageLayerOffset(&right_digit_layer,
+									right_digit.pos_X,
+									right_digit.pos_Y,
+									display_1,
+									update);
+				}
+					else 
+					{
+					destroyImageLayer(&right_digit_layer);
+
+					if(refresh_MSB)
+					{
+						if(floor_state[1] > 9)
+						{
+							destroyImageLayer(&left_digit_layer);
+						}
+						sprintf(pic_name, "./resources/%d.png", floor_state[0] / 10);
+						update_picture_on_layer(&left_digit_layer, pic_name);
+						createResourceImageLayer(&left_digit_layer, right_digit.layer);
+					}
+
+					sprintf(pic_name, "./resources/%d.png", floor_state[0] % 10);
+					update_picture_on_layer(&right_digit_layer, pic_name);
+					createResourceImageLayer(&right_digit_layer, right_digit.layer);
+					
+				}//if(floor_cnt > 9)
+				
+			}//if(floor_state[0] != floor_state[1])
+			
+		
+			/*Обновление спрайта направления движения*/
+			if(arrow_state[0] != arrow_state[1])
+			{
+				char pic_name[40];
+				
+				
+			}//if(arrow_state[0] != arrow_state[1])
 			
 			floor_state[1] = floor_state[0];
 			arrow_state[1] = arrow_state[0];		
