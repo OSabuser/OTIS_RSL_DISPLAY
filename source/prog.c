@@ -125,7 +125,7 @@ int main(int argc, char *argv[])
     image_object_t   left_digit = 
     {
         .background = 0x00, 
-        .layer = 3, 
+        .layer = 2, 
         .display_number = 0, 
         .pos_X = 600, 
         .pos_Y = 112
@@ -378,7 +378,22 @@ int main(int argc, char *argv[])
 					sprintf(pic_name, "./resources/%d.png", floor_state[0] % 10);
 					update_picture_on_layer(&right_digit_layer, pic_name);
 					createResourceImageLayer(&right_digit_layer, right_digit.layer);
+
+
+
+					addElementImageLayerOffset(&right_digit_layer,
+                                right_digit.pos_X,
+                                right_digit.pos_Y,
+                                display_1,
+                                update); 
 					
+					addElementImageLayerOffset(&left_digit_layer,
+                                left_digit.pos_X,
+                                left_digit.pos_Y,
+                                display_1,
+                                update);
+								
+								
 					result = vc_dispmanx_update_submit_sync(update); //Update images
 					
 				}//if(floor_cnt > 9)
