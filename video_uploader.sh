@@ -30,14 +30,15 @@ EXEC_NAME=source
 # Таймаут "опроса" о наличие смонтированной флешки
 SLEEP_TIME=10
 
-trap '[ -z $! ] || kill $!' SIGHUP SIGINT SIGQUIT SIGTERM
-./$OTIS_RSL_DISPLAY/source/source -dynamic &
+
+./OTIS_RSL_DISPLAY/source/source -dynamic &
+pid=$!
 sleep 5
 
 
 # Работаем, пока существует процесс основной программы (pgrep ret code == 0)
-while [ -e /proc/$! ]:
-do
+while ps -p $pid &>/dev/null; do
+
 	echo -e "${BYellow} Routine:  Check for mounted usb devices... ${White}"
 	
 	# Проверка наличия блочных устройств (по умолчанию есть только mmcblk, на котором расположены ОС и ФС
