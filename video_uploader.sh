@@ -31,12 +31,12 @@ EXEC_NAME=source
 SLEEP_TIME=10
 
 
-~/OTIS_RSL_DISPLAY/source/source -dynamic &
+~/OTIS_RSL_DISPLAY/source/source -static &
 pid=$!
 sleep 5
 
 
-# Работаем, пока существует процесс основной программы (pgrep ret code == 0)
+# Работаем, пока существует процесс основной программы source
 while ps -p $pid &>/dev/null; do
 
 	echo -e "${BYellow} Routine:  Check for mounted usb devices... ${White}"
@@ -89,15 +89,25 @@ while ps -p $pid &>/dev/null; do
 				
 				# Извлечение флешки
 				udisksctl power-off -b $DISK_NAME
+							
+				# Выключаем видеоплеер, если воспроизводилось видео
+				if pgrep -x omxplayer >/dev/null
+				then
+					pkill omxplayer
+					omxplayer  --loop --no-osd video/output.mp4 &
+					sleep 3
+				else
+					# Выгружаем процесс основной программы, работающей в статическом режиме
+					pkill source
+					omxplayer  --loop --no-osd video/output.mp4 &
+					sleep 3
+					~/OTIS_RSL_DISPLAY/source/source --dynamic &
+				fi
 				
-                # P
-                pkill $EXEC_NAME
-                #omxplayer  --loop --no-osd video/output.mp4 &
-                ./$EXEC_NAME -dynamic &
-				# Restart supervisor script
-                #exec ./supervisor.sh
         else
-            echo -e "${BRed} ---------------->Video files aren't present. Static image mode ${White}"    
+            echo -e "${BRed} ---------------->Video files aren't present. Static image mode ${White}"
+			pkill omxplayer
+			~/OTIS_RSL_DISPLAY/source/source -static &
         fi    
            
     else 
@@ -113,4 +123,4 @@ done
 
 # Попадаем сюда, если каким-то образом основной процесс был завершён
 echo  -e "${BRed} ---------------->OH SHIT! $EXEC_NAME doesn't exist! We need to reboot the system!"
-#reboot
+reboot
