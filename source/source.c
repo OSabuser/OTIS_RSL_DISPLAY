@@ -76,6 +76,8 @@ int main(int argc, char *argv[])
 	
 	/*DispmanX structure wrappers*/
     IMAGE_LAYER_T background_layer, right_digit_layer, arrow_layer, left_digit_layer;
+	DISPMANX_DISPLAY_HANDLE_T display_1;
+
 
     /*Create init image objects*/
     ImageObject_t   background = 
@@ -139,6 +141,14 @@ int main(int argc, char *argv[])
 			fprintf(stderr, RED("unable to load %s\n"), background.image_path);
 			exit(EXIT_FAILURE);
 		}
+		
+		createResourceImageLayer(&background_layer, background.layer);
+		addElementImageLayerOffset(&background_layer,
+                               background.pos_X,
+                               background.pos_Y,
+                               display_1,
+                               update);
+							   
         
     }
     else if (strcmp(work_mode, "-dynamic") == 0)
@@ -173,8 +183,7 @@ int main(int argc, char *argv[])
 	
 	int result = 0;
 
-    DISPMANX_DISPLAY_HANDLE_T display_1;
-
+    
     result = vc_dispmanx_display_close(display_1);
     assert(result == 0);
     
@@ -187,7 +196,7 @@ int main(int argc, char *argv[])
     assert(result == 0);
 
     
-    createResourceImageLayer(&background_layer, background.layer);
+    
     createResourceImageLayer(&right_digit_layer, right_digit.layer);
     createResourceImageLayer(&left_digit_layer, left_digit.layer);
     createResourceImageLayer(&arrow_layer, arrow.layer);
@@ -198,11 +207,7 @@ int main(int argc, char *argv[])
     assert(update != 0);
 
        
-    addElementImageLayerOffset(&background_layer,
-                               background.pos_X,
-                               background.pos_Y,
-                               display_1,
-                               update);
+    
     
     addElementImageLayerOffset(&right_digit_layer,
                                right_digit.pos_X,
