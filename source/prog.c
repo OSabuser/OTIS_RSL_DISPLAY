@@ -372,10 +372,11 @@ int main(int argc, char *argv[])
 						}
 						sprintf(pic_name, "./resources/%d.png", floor_state[0] / 10);
 						update_picture_on_layer(&left_digit_layer, pic_name);
-						createResourceImageLayer(&left_digit_layer, right_digit.layer);
+						createResourceImageLayer(&left_digit_layer, left_digit.layer);
 					}
 
 					sprintf(pic_name, "./resources/%d.png", floor_state[0] % 10);
+					printf("Pic_name: %s, DIGIT: %d",pic_name, floor_state[0] % 10);
 					update_picture_on_layer(&right_digit_layer, pic_name);
 					createResourceImageLayer(&right_digit_layer, right_digit.layer);
 
