@@ -50,3 +50,6 @@ fi
 
 echo -e "${BYellow} Сборка исходного кода....${White}"
 make
+
+chmod +x ~/OTIS_RSL_DISPLAY/video_uploader.sh
+chmod +x ~/OTIS_RSL_DISPLAY/update_source.sh
