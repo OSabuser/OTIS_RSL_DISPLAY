@@ -270,7 +270,7 @@ int main(int argc, char *argv[])
     
 
 	bool refresh_MSB = false, is_refresh_needed = false;
-	
+	system("aplay ./resources/g_triple.wav >/dev/null 2>&1");
 	
     while (1)
     {
@@ -399,10 +399,16 @@ int main(int argc, char *argv[])
 					case 2: // Вниз
 						update_picture_on_layer(&arrow_layer, "./resources/ARROW_DOWN.png");					
 					break;
-					default:
+					default:// Нет движения
 						update_picture_on_layer(&arrow_layer, "./resources/BLANK_ARROW.png");
 					break;
 					
+				}
+				
+				/* Воспроизведение звука "ГОНГ" */
+				if(arrow_state[0] == 0 || arrow_state[0] == 3)
+				{
+					system("aplay ./resources/g_triple.wav >/dev/null 2>&1");		
 				}
 				
 				createResourceImageLayer(&arrow_layer, arrow.layer);
@@ -413,7 +419,7 @@ int main(int argc, char *argv[])
 			floor_state[1] = floor_state[0];
 			arrow_state[1] = arrow_state[0];		
 		
-		}
+		}//if(is_packet_valid)
 		
 		/* Обновление экрана */
 		if(is_refresh_needed)
