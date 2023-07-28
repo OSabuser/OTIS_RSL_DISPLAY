@@ -166,9 +166,9 @@ int main(int argc, char *argv[])
     }
 	
 	/* Загрузка стартовых спрайтов*/
-    update_picture_on_layer(&left_digit_layer, "asdasd");
-    update_picture_on_layer(&right_digit_layer, "./images/2.png");
-    update_picture_on_layer(&arrow_layer, "./images/3.png");
+    update_picture_on_layer(&left_digit_layer, "~/OTIS_RSL_DISPLAY/source/images/1.png");
+    update_picture_on_layer(&right_digit_layer, "~/OTIS_RSL_DISPLAY/source/images/2.png");
+    update_picture_on_layer(&arrow_layer, "~/OTIS_RSL_DISPLAY/source/images/3.png");
 	
 	
 	int result = 0;
@@ -199,7 +199,7 @@ int main(int argc, char *argv[])
 	
 	if(is_static_mode)
 	{
-		 update_picture_on_layer(&background_layer, "./images/BACK.png");
+		 update_picture_on_layer(&background_layer, "~/OTIS_RSL_DISPLAY/source/images/BACK.png");
 		
 		createResourceImageLayer(&background_layer, background.layer);
 		addElementImageLayerOffset(&background_layer,
