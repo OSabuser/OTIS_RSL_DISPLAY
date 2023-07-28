@@ -31,7 +31,7 @@ EXEC_NAME=source
 SLEEP_TIME=10
 
 
-./OTIS_RSL_DISPLAY/source/source -dynamic &
+~/OTIS_RSL_DISPLAY/source/source -dynamic &
 pid=$!
 sleep 5
 
