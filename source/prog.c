@@ -404,7 +404,7 @@ int main(int argc, char *argv[])
 		{
 			is_refresh_needed = false;
 			update = vc_dispmanx_update_start(0);
-		/*
+		
 			addElementImageLayerOffset(&right_digit_layer,
 									right_digit.pos_X,
 									right_digit.pos_Y,
@@ -423,10 +423,7 @@ int main(int argc, char *argv[])
                                 update);
 								
 			
-			*/
-			
-			
-			
+					
 			result = vc_dispmanx_update_submit_sync(update); //Update images
 			
 		}//if(is_refresh_needed)
