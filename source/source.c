@@ -37,10 +37,21 @@ enum {
 	ARROW_BIT_POS = 5U	
 };
 
+typedef struct
+{
+    uint16_t background; //Alfa layer (0 - transparent)
+    int32_t layer;
+    uint32_t display_number;
+    int32_t pos_X;
+    int32_t pos_Y;
+    const char *image_path;
+}image_object_t;
+
 
 volatile bool run = true;
 const char *program = NULL;
 const char *work_mode = NULL;
+bool is_static_mode = true;
 
 static void print_usage(void)
 {
@@ -80,7 +91,7 @@ int main(int argc, char *argv[])
 
 
     /*Create init image objects*/
-    ImageObject_t   background = 
+    image_object_t   background = 
     {   
         .background = 0x00, 
         .layer = 1, 
@@ -90,7 +101,7 @@ int main(int argc, char *argv[])
 		.image_path = "./images/BACK.png"
     };
     
-    ImageObject_t   right_digit = 
+    image_object_t   right_digit = 
     {
         .background = 0x00, 
         .layer = 2, 
@@ -99,7 +110,7 @@ int main(int argc, char *argv[])
         .pos_Y = 112, 
         .image_path = "./images/4.png"
     };
-    ImageObject_t   left_digit = 
+    image_object_t   left_digit = 
     {
         .background = 0x00, 
         .layer = 4, 
@@ -110,7 +121,7 @@ int main(int argc, char *argv[])
     };
     
     
-    ImageObject_t   arrow = 
+    image_object_t   arrow = 
     {
         .background = 0x00, 
         .layer = 3, 
@@ -136,24 +147,12 @@ int main(int argc, char *argv[])
     if(strcmp(work_mode, "-static") == 0)
     {
         printf("Static mode\n");
-		if (loadPng(&(background_layer.image), background.image_path) == false)
-		{
-			fprintf(stderr, RED("unable to load %s\n"), background.image_path);
-			exit(EXIT_FAILURE);
-		}
-		
-		createResourceImageLayer(&background_layer, background.layer);
-		addElementImageLayerOffset(&background_layer,
-                               background.pos_X,
-                               background.pos_Y,
-                               display_1,
-                               update);
-							   
-        
+		is_static_mode = true;   
     }
     else if (strcmp(work_mode, "-dynamic") == 0)
     {
         printf("Dynamic mode\n");
+		is_static_mode = false;
     }
     else
     {
@@ -205,10 +204,25 @@ int main(int argc, char *argv[])
 
     DISPMANX_UPDATE_HANDLE_T update = vc_dispmanx_update_start(0);
     assert(update != 0);
+	
+	
+	if(!is_static_mode)
+	{
+		if (loadPng(&(background_layer.image), background.image_path) == false)
+		{
+			fprintf(stderr, RED("unable to load %s\n"), background.image_path);
+			exit(EXIT_FAILURE);
+		}
+		
+		createResourceImageLayer(&background_layer, background.layer);
+		addElementImageLayerOffset(&background_layer,
+                               background.pos_X,
+                               background.pos_Y,
+                               display_1,
+                               update);		
+	}
 
-       
-    
-    
+          
     addElementImageLayerOffset(&right_digit_layer,
                                right_digit.pos_X,
                                right_digit.pos_Y,
