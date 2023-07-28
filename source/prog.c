@@ -365,7 +365,7 @@ int main(int argc, char *argv[])
 
 					if(refresh_MSB)
 					{
-						if(floor_state[1] > 9)
+						//if(floor_state[1] > 9)
 						{
 							destroyImageLayer(&left_digit_layer);
 						}
