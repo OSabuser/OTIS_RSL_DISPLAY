@@ -390,7 +390,7 @@ int main(int argc, char *argv[])
 				char pic_name[40];
 				destroyImageLayer(&arrow_layer);
 			
-				switch(arrow_state[0)
+				switch(arrow_state[0])
 				{
 					case 1: // Вверх
 						update_picture_on_layer(&arrow_layer, "./resources/ARROW_UP.png");	
