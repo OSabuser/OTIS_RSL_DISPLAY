@@ -30,6 +30,10 @@ EXEC_NAME=source
 # Таймаут "опроса" о наличие смонтированной флешки
 SLEEP_TIME=10
 
+./$OTIS_RSL_DISPLAY/source/source -dynamic &
+sleep $SLEEP_TIME
+
+
 # Работаем, пока существует процесс основной программы (pgrep ret code == 0)
 while pgrep -x $EXEC_NAME > /dev/null:
 do
