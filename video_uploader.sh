@@ -26,12 +26,12 @@ BWhite='\033[1;37m'       # White
 
 # Директория с исполняемой программой и видео
 EXEC_PATH=~/OTIS_RSL_DISPLAY/source
-EXEC_NAME=source
+EXEC_NAME=prog
 # Таймаут "опроса" о наличие смонтированной флешки
 SLEEP_TIME=10
 
-
-~/OTIS_RSL_DISPLAY/source/source -static &
+cd $EXEC_PATH
+./$EXEC_NAME -static &
 pid=$!
 sleep 5
 
@@ -101,13 +101,14 @@ while ps -p $pid &>/dev/null; do
 					pkill source
 					omxplayer  --loop --no-osd video/output.mp4 &
 					sleep 3
-					~/OTIS_RSL_DISPLAY/source/source --dynamic &
+					./$EXEC_NAME -dynamic &
 				fi
 				
         else
             echo -e "${BRed} ---------------->Video files aren't present. Static image mode ${White}"
 			pkill omxplayer
-			~/OTIS_RSL_DISPLAY/source/source -static &
+			cd $EXEC_PATH
+			./$EXEC_NAME -static &
         fi    
            
     else 
