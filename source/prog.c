@@ -232,24 +232,6 @@ int main(int argc, char *argv[])
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
    /*mini UART, TX-14, RX-15 */
 	struct termios serial;
     char uart_rx_buffer[10];
@@ -341,7 +323,7 @@ int main(int argc, char *argv[])
 			}
 			
 			/*Обновление спрайтов номера этажа*/
-			if(floor_state[0] != floor_state[1] && 0)
+			if(floor_state[0] != floor_state[1])
 			{
 				char pic_name[40];
 					
@@ -396,6 +378,8 @@ int main(int argc, char *argv[])
 					sprintf(pic_name, "./resources/%d.png", floor_state[0] % 10);
 					update_picture_on_layer(&right_digit_layer, pic_name);
 					createResourceImageLayer(&right_digit_layer, right_digit.layer);
+					
+					result = vc_dispmanx_update_submit_sync(update); //Update images
 					
 				}//if(floor_cnt > 9)
 				
