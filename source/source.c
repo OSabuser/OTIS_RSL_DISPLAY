@@ -166,7 +166,7 @@ int main(int argc, char *argv[])
     }
 	
 	/* Загрузка стартовых спрайтов*/
-    update_picture_on_layer(&left_digit_layer, "./images/1.png");
+    update_picture_on_layer(&left_digit_layer, "./images/1123213123.png");
     update_picture_on_layer(&right_digit_layer, "./images/2.png");
     update_picture_on_layer(&arrow_layer, "./images/3.png");
 	
