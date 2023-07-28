@@ -343,6 +343,7 @@ int main(int argc, char *argv[])
 				
 				refresh_MSB = true;
 				
+				update = vc_dispmanx_update_start(0);
 				if(floor_state[0] < 10)
 				{
 					
@@ -364,6 +365,7 @@ int main(int argc, char *argv[])
 				}
 				else 
 				{
+					
 					destroyImageLayer(&right_digit_layer);
 
 					if(refresh_MSB)
@@ -375,19 +377,16 @@ int main(int argc, char *argv[])
 						sprintf(pic_name, "./resources/%d.png", floor_state[0] / 10);
 						printf("Pic_name: %s",pic_name);
 						
-						
-						createResourceImageLayer(&left_digit_layer, left_digit.layer);
 						update_picture_on_layer(&left_digit_layer, pic_name);
+						createResourceImageLayer(&left_digit_layer, left_digit.layer);
 					}
 
 					sprintf(pic_name, "./resources/%d.png", floor_state[0] % 10);
 					printf("Pic_name: %s",pic_name);
 					
 					
-					
-					createResourceImageLayer(&right_digit_layer, right_digit.layer);
 					update_picture_on_layer(&right_digit_layer, pic_name);
-
+					createResourceImageLayer(&right_digit_layer, right_digit.layer);
 
 					addElementImageLayerOffset(&right_digit_layer,
                                 right_digit.pos_X,
