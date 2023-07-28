@@ -1,6 +1,5 @@
 TARGETS=lib \
-	source 
-
+	main 
 
 default :all
 
