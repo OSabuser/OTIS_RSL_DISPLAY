@@ -165,7 +165,6 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 	
-lll
 	/* Загрузка стартовых спрайтов*/
     update_picture_on_layer(&left_digit_layer, "./images/1.png");
     update_picture_on_layer(&right_digit_layer, "./images/2.png");
