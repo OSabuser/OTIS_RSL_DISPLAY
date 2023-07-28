@@ -328,6 +328,8 @@ int main(int argc, char *argv[])
 			/*Обновление спрайтов номера этажа*/
 			if(floor_state[0] != floor_state[1])
 			{
+				char pic_name[40];
+					
 				/* Перерисовывать старший разряд?*/
 				if((floor_state[0] > 9 && floor_state[1] < 10) || (floor_state[0] < 10 && floor_state[1] > 9))
 				{
@@ -344,7 +346,6 @@ int main(int argc, char *argv[])
 				
 				if(floor_state[0] < 10)
 				{
-					char pic_name[40];
 					
 					destroyImageLayer(&right_digit_layer);
 
