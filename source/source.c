@@ -167,14 +167,22 @@ int main(int argc, char *argv[])
 			printf("True message: %s, %d bytes\n", uart_rx_buffer, bytes_read);
 			
 			int msb = uart_rx_buffer[FLOOR_H_POS] - '0', lsb = uart_rx_buffer[FLOOR_L_POS] - '0';
+			int arrow_bits = uart_rx_buffer[ARROW_BIT_POS] - '0';
 			
-			if(is_val_in_range(msb, 0, 10) && is_val_in_range(lsb, 0, 10))
+			if(is_val_in_range(msb, 0, 10) && is_val_in_range(lsb, -1, 10))
 			{
 				floor_state[0] = msb * 10 + lsb;	
 				printf("True floor number: %d\n", floor_state[0]);				
 			}
 			
-					
+			if(is_val_in_range(arrow_bits, -1, 4))
+			{
+				arrow_state[0] = arrow_bits; 
+				printf("True arrow value: %d\n", arrow_state[0]);	
+			}
+			
+			floor_state[1] = floor_state[0];
+			arrow_state[1] = arrow_state[0];		
 		}
 		
 	
