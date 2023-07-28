@@ -169,8 +169,8 @@ int main(int argc, char *argv[])
 	bcm_host_init();
 	
 	/* Загрузка стартовых спрайтов*/
-   // update_picture_on_layer(&left_digit_layer, "./resources/0.png");
-   // update_picture_on_layer(&right_digit_layer, "./resources/0.png");
+    update_picture_on_layer(&left_digit_layer, "./resources/0.png");
+    update_picture_on_layer(&right_digit_layer, "./resources/0.png");
     update_picture_on_layer(&arrow_layer, "./resources/ARROW_UP.png");
 	
 	
@@ -269,7 +269,7 @@ int main(int argc, char *argv[])
 	}
     
 
-	bool refresh_MSB = false;
+	bool refresh_MSB = false, is_refresh_needed = false;
 	
 	
     while (1)
@@ -325,6 +325,7 @@ int main(int argc, char *argv[])
 			/*Обновление спрайтов номера этажа*/
 			if(floor_state[0] != floor_state[1])
 			{
+				is_refresh_needed = true;
 				char pic_name[40];
 					
 				/* Перерисовывать старший разряд?*/
@@ -341,9 +342,8 @@ int main(int argc, char *argv[])
 					refresh_MSB = false;
 				}
 				
-				refresh_MSB = true;
 				
-				update = vc_dispmanx_update_start(0);
+				
 				if(floor_state[0] < 10)
 				{
 					
@@ -357,15 +357,10 @@ int main(int argc, char *argv[])
 					sprintf(pic_name, "./resources/%d.png", floor_state[0] % 10);
 					update_picture_on_layer(&right_digit_layer, pic_name);
 					createResourceImageLayer(&right_digit_layer, right_digit.layer);
-					addElementImageLayerOffset(&right_digit_layer,
-									right_digit.pos_X,
-									right_digit.pos_Y,
-									display_1,
-									update);
+					
 				}
 				else 
-				{
-					
+				{				
 					destroyImageLayer(&right_digit_layer);
 
 					if(refresh_MSB)
@@ -381,28 +376,10 @@ int main(int argc, char *argv[])
 						createResourceImageLayer(&left_digit_layer, left_digit.layer);
 					}
 
-					sprintf(pic_name, "./resources/%d.png", floor_state[0] % 10);
-					printf("Pic_name: %s",pic_name);
-					
-					
+					sprintf(pic_name, "./resources/%d.png", floor_state[0] % 10);				
 					update_picture_on_layer(&right_digit_layer, pic_name);
 					createResourceImageLayer(&right_digit_layer, right_digit.layer);
-
-					addElementImageLayerOffset(&right_digit_layer,
-                                right_digit.pos_X,
-                                right_digit.pos_Y,
-                                display_1,
-                                update); 
-					
-					addElementImageLayerOffset(&left_digit_layer,
-                                left_digit.pos_X,
-                                left_digit.pos_Y,
-                                display_1,
-                                update);
-								
-								
-					result = vc_dispmanx_update_submit_sync(update); //Update images
-					
+									
 				}//if(floor_state[0] < 10)
 				
 			}//if(floor_state[0] != floor_state[1])
@@ -411,14 +388,48 @@ int main(int argc, char *argv[])
 			/*Обновление спрайта направления движения*/
 			if(arrow_state[0] != arrow_state[1])
 			{
+				is_refresh_needed = true;
 				char pic_name[40];
-				
+				//destroyImageLayer(&arrow_layer);
 				
 			}//if(arrow_state[0] != arrow_state[1])
 			
 			floor_state[1] = floor_state[0];
 			arrow_state[1] = arrow_state[0];		
+		
 		}
+		
+		
+		if(is_refresh_needed)
+		{
+			is_refresh_needed = false;
+			update = vc_dispmanx_update_start(0);
+		/*
+			addElementImageLayerOffset(&right_digit_layer,
+									right_digit.pos_X,
+									right_digit.pos_Y,
+									display_1,
+									update);		
+			addElementImageLayerOffset(&right_digit_layer,
+                                right_digit.pos_X,
+                                right_digit.pos_Y,
+                                display_1,
+                                update); 
+					
+			addElementImageLayerOffset(&left_digit_layer,
+                                left_digit.pos_X,
+                                left_digit.pos_Y,
+                                display_1,
+                                update);
+								
+			
+			*/
+			
+			
+			
+			result = vc_dispmanx_update_submit_sync(update); //Update images
+			
+		}//if(is_refresh_needed)
 		
 	
        
