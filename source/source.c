@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
         .display_number = 0, 
         .pos_X = 0, 
         .pos_Y = 0,
-		.image_path = "./images/BACK.png"
+		.image_path = "/images/BACK.png"
     };
     
     image_object_t   right_digit = 
@@ -108,7 +108,7 @@ int main(int argc, char *argv[])
         .display_number = 0, 
         .pos_X = 774, 
         .pos_Y = 112, 
-        .image_path = "./images/4.png"
+        .image_path = "/images/4.png"
     };
     image_object_t   left_digit = 
     {
@@ -117,7 +117,7 @@ int main(int argc, char *argv[])
         .display_number = 0, 
         .pos_X = 600, 
         .pos_Y = 112, 
-        .image_path = "./images/1.png"
+        .image_path = "/images/1.png"
     };
     
     
@@ -128,7 +128,7 @@ int main(int argc, char *argv[])
         .display_number = 0, 
         .pos_X = 625, 
         .pos_Y = 450, 
-        .image_path = "./images/ARROW_DOWN.png"
+        .image_path = "/images/ARROW_DOWN.png"
     };
 	
 	
@@ -206,7 +206,7 @@ int main(int argc, char *argv[])
     assert(update != 0);
 	
 	
-	if(!is_static_mode)
+	if(is_static_mode)
 	{
 		if (loadPng(&(background_layer.image), background.image_path) == false)
 		{
