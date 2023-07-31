@@ -325,6 +325,13 @@ int main(int argc, char *argv[])
 			/*Обновление спрайтов номера этажа*/
 			if(floor_state[0] != floor_state[1])
 			{
+				
+				if(floor_state[0] == 1 && floor_state[1] == 2) /* Воспроиведение звука "ГОНГ" */
+				{
+					system("aplay ./resources/g_triple.wav >/dev/null 2>&1");						
+				}
+				
+				
 				is_refresh_needed = true;
 				char pic_name[40];
 					
@@ -403,13 +410,7 @@ int main(int argc, char *argv[])
 						update_picture_on_layer(&arrow_layer, "./resources/BLANK_ARROW.png");
 					break;
 					
-				}
-				
-				/* Воспроизведение звука "ГОНГ" */
-				if(arrow_state[0] == 0 || arrow_state[0] == 3)
-				{
-					system("aplay ./resources/g_triple.wav >/dev/null 2>&1");		
-				}
+				}				
 				
 				createResourceImageLayer(&arrow_layer, arrow.layer);
 	
